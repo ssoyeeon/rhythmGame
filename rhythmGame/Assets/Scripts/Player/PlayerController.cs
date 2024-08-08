@@ -8,10 +8,14 @@ public class PlayerController : MonoBehaviour
     //점수 콤보 - 필요행필요행!!
     public NoteManager noteManager;
 
+    public Note note;
+
+    public GameObject player;
+
     public int playerHp;                         //HP네여
     public int playerAttack;                     //공격이에여
     public float attackCoolTime;                 //어택이 바로바로 되면 안돼여...
-    public int jumpForce;                        //점프 할 힘!!!!!!!!!!!
+    public int jumpPosition;                    //점프 할 힘!!!!!!!!!!!
     public float jumpCoolTime;                  //점프 쿨타임
 
     public float maxHigh;                       //점프 시 최대 높이
@@ -24,15 +28,19 @@ public class PlayerController : MonoBehaviour
     public bool isStart;        //시작했나여?
     public bool isEnd;          //게임이 끝났나여?
     public bool isJumping;      //뛰고 있나여?
+
+    public Vector3 bad = new Vector3(-4.6f, -4.6f);     //이렇게 하면 되지... 않을까... 하는... 나는... 멍청이에요.... x 좌표만 해야재ㅣㅇ머 나ㅕㅣ 포ㅕㅗㅂㅁ펴ㅑㅏㅗㅁ파ㅣ ㅎㅅㅁ너ㅏㅏㅠ암 ㄴㅊ혀ㅓㅗㅊ 
+    public Vector3 great = new Vector3(-4.7f, -4f);
+    public Vector3 perfect = new Vector3(-5.6f, -4.8f);
     
     void Start()
     {
         startTime = 3;                  //시작 시간 전 3초구여
         playerHp = 150;                 //플레이어에게 Hp를 150으로 지정해줘요
         playerAttack = 20;             //플레이어의 공격력을 주는 이유는 나중에 연타 하는 아이가 생길 수 있기 때문이에여
-        attackCoolTime = 0.2f;            //플레이어가 연타하면 이기겠죠~? 그럼 안돼요! 그렇기 때문에 시간을 줄거에여
-        jumpCoolTime = 0.2f;            //플레이어가 계속 점프하면 재미가 없겠죠~? 깔깔! 그렇게 때문에 쿨타임을 줍니다요~~
-        jumpForce = 10;                 //일단 잘 모르겠으니까 10 정도로 줘볼게요옹 
+        attackCoolTime = 0f;            //플레이어가 연타하면 이기겠죠~? 그럼 안돼요! 그렇기 때문에 시간을 줄거에여
+        jumpCoolTime = 0f;            //플레이어가 계속 점프하면 재미가 없겠죠~? 깔깔! 그렇게 때문에 쿨타임을 줍니다요~~
+        jumpPosition = 6;                 //일단 잘 모르겠으니까 10 정도로 줘볼게요옹 
         
         //이 친구들은 일단 다 비활성화 해줍니다요
         isDead = false;
@@ -53,9 +61,7 @@ public class PlayerController : MonoBehaviour
         if(isStart == true)
         {
             GameStart();
-            Attack();
-            Jump();
-
+         
             if (playerHp <= 0)
             {
                 //트위닝 합시당 혹은 애니메이션 넣을게요~
@@ -64,22 +70,24 @@ public class PlayerController : MonoBehaviour
 
             if(Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.F))
             {
-                Jump();
-                if(attackCoolTime <= 0)
+                if(jumpCoolTime <= 0)
                 {
+                    Jump();
                     Attack();
-                    attackCoolTime -= Time.deltaTime;
-                } 
+                    jumpCoolTime = 0.2f;                //점프 쿨타임 줍니다요오
+                }
             }
+            jumpCoolTime -= Time.deltaTime;             //점프 쿨타임 없애 없애~~
 
-            if(Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.K))
+            if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.K))
             {
                 if (attackCoolTime <= 0)
                 {
-                    Attack();
-                    attackCoolTime -= Time.deltaTime;
+                    Attack();                           //공격 공격
+                    attackCoolTime = 0.2f;              //어택 쿨타임을 줍니다요오
                 }
             }
+            attackCoolTime -= Time.deltaTime;   //어택 쿨타임 없애 없애
         }
     }
 
@@ -90,11 +98,13 @@ public class PlayerController : MonoBehaviour
     
     void Attack()                           //플레이어가 때릴 때 나타나게 됩니다.
     {
-        //판정 및 어떻게 충돌처리 할 지 교수님께 물어보깅 
+
     }    
+
     void Jump()
     {
-        playerRigidbody.AddForce(new Vector3(0, jumpForce, 0));    //점프 할 힘이 지금은 10입니다요
+        player.transform.position = new Vector3(-7, jumpPosition, 0);       //점프 점프
+        playerRigidbody.velocity = Vector3.zero;                            //점프 중력 차단차단
     }
 
     void Dead()
