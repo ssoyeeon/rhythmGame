@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     //점수 콤보 - 필요행필요행!!
     public NoteManager noteManager;
 
-    public Note note;
+    public List<Note> notes = new List<Note>();         //모든 노트 정보를 담는 리스트
 
     public GameObject player;
 
@@ -28,10 +28,6 @@ public class PlayerController : MonoBehaviour
     public bool isStart;        //시작했나여?
     public bool isEnd;          //게임이 끝났나여?
     public bool isJumping;      //뛰고 있나여?
-
-    public Vector3 bad = new Vector3(-4.6f, -4.6f);     //이렇게 하면 되지... 않을까... 하는... 나는... 멍청이에요.... x 좌표만 해야재ㅣㅇ머 나ㅕㅣ 포ㅕㅗㅂㅁ펴ㅑㅏㅗㅁ파ㅣ ㅎㅅㅁ너ㅏㅏㅠ암 ㄴㅊ혀ㅓㅗㅊ 
-    public Vector3 great = new Vector3(-4.7f, -4f);
-    public Vector3 perfect = new Vector3(-5.6f, -4.8f);
     
     void Start()
     {
@@ -40,7 +36,7 @@ public class PlayerController : MonoBehaviour
         playerAttack = 20;             //플레이어의 공격력을 주는 이유는 나중에 연타 하는 아이가 생길 수 있기 때문이에여
         attackCoolTime = 0f;            //플레이어가 연타하면 이기겠죠~? 그럼 안돼요! 그렇기 때문에 시간을 줄거에여
         jumpCoolTime = 0f;            //플레이어가 계속 점프하면 재미가 없겠죠~? 깔깔! 그렇게 때문에 쿨타임을 줍니다요~~
-        jumpPosition = 6;                 //일단 잘 모르겠으니까 10 정도로 줘볼게요옹 
+        jumpPosition = 6;                 //6 주니까 딱 맞네여!!
         
         //이 친구들은 일단 다 비활성화 해줍니다요
         isDead = false;

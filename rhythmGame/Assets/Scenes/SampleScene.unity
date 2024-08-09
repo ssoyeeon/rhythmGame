@@ -157,10 +157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   noteManager: {fileID: 740912705}
-  note:
-    trackIndex: 0
-    startTime: 0
-    duration: 0
+  notes: []
   player: {fileID: 57362064}
   playerHp: 0
   playerAttack: 0
@@ -174,9 +171,6 @@ MonoBehaviour:
   isStart: 0
   isEnd: 0
   isJumping: 0
-  bad: {x: -4.7, y: -4, z: 0}
-  great: {x: -5, y: -4, z: 0}
-  perfect: {x: -5.3, y: -4.6, z: 0}
 --- !u!136 &57362066
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -493,6 +487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99aad31e8bf695b4f9422183ad960f74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playercontroller: {fileID: 57362065}
   audioClip: {fileID: 0}
   notes: []
   bpm: 120
@@ -1032,7 +1027,7 @@ Transform:
   m_GameObject: {fileID: 1653799873}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.9, y: 6.15, z: 0}
+  m_LocalPosition: {x: -3.83, y: 6.15, z: 0}
   m_LocalScale: {x: 0.29153, y: 0.64906, z: 0.33519}
   m_ConstrainProportionsScale: 0
   m_Children: []

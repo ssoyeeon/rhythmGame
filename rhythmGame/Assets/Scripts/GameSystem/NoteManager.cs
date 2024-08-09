@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class NoteManager : MonoBehaviour
 {
+    public PlayerController playercontroller;
+
     public AudioClip audioClip;                         //재생할 오디오 클립
     public List<Note> notes = new List<Note>();         //모든 노트 정보를 담는 리스트
     public float bpm = 120f;                            //곡의 BPM
@@ -34,7 +36,9 @@ public class NoteManager : MonoBehaviour
         activeNotes.AddRange(notes);
         spawnOffset = (10 - hitPosition) / noteSpeed;           //노트 생성 시간 오프셋 계산
 
-        if(debugMode )
+        playercontroller.notes = this.notes;                    //노트 플레이어한테 보내깅
+
+        if (debugMode)
         {
             CreateHitPositionMarker();
         }    
