@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5290830420609770502}
   - component: {fileID: 1341179431703891925}
   - component: {fileID: 7087430544351180912}
+  - component: {fileID: 4977266448948060218}
   m_Layer: 0
   m_Name: Note_cube
   m_TagString: Note
@@ -125,3 +126,17 @@ MonoBehaviour:
   speed: 0
   hitPosition: 0
   startTime: 0
+--- !u!114 &4977266448948060218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4171939652226879388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f978571c2e970e4397ef5f562c1035e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 0}
+  player: {fileID: 0}

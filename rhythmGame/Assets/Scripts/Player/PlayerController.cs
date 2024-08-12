@@ -1,16 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    //점수 콤보 - 필요행필요행!!
+    //점수 콤보 타격 - 필요행필요행!!
     public NoteManager noteManager;
+
+    public NoteObject noteObject;
 
     public List<Note> notes = new List<Note>();         //모든 노트 정보를 담는 리스트
 
     public GameObject player;
+
+    public Transform playertransform;
 
     public int playerHp;                         //HP네여
     public int playerAttack;                     //공격이에여
@@ -69,7 +74,7 @@ public class PlayerController : MonoBehaviour
                 if(jumpCoolTime <= 0)
                 {
                     Jump();
-                    Attack();
+                    DownAttack();
                     jumpCoolTime = 0.2f;                //점프 쿨타임 줍니다요오
                 }
             }
@@ -79,7 +84,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (attackCoolTime <= 0)
                 {
-                    Attack();                           //공격 공격
+                    DownAttack();                           //공격 공격
                     attackCoolTime = 0.2f;              //어택 쿨타임을 줍니다요오
                 }
             }
@@ -92,10 +97,10 @@ public class PlayerController : MonoBehaviour
         //함수 총집합!!
     }
     
-    void Attack()                           //플레이어가 때릴 때 나타나게 됩니다.
+    void DownAttack()                           //플레이어가 때릴 때 나타나게 됩니다.
     {
-
-    }    
+        
+    }
 
     void Jump()
     {

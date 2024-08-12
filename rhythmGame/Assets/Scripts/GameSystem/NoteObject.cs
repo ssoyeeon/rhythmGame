@@ -9,6 +9,9 @@ public class NoteObject : MonoBehaviour
     public float hitPosition;       //판저ㅇ 위치 
     public float startTime;         //게이ㅁ 시자ㄱ 시간
 
+    public float perfect1 = 3f;
+    public float perfect2 = 1f;
+
     //노트 오브젝ㅌㅡ 초기화
 
     public void Initialized(Note note, float spped, float hitPosition, float startTime)
@@ -37,6 +40,25 @@ public class NoteObject : MonoBehaviour
         if(transform.position.x < hitPosition - 1)
         {
             Destroy(gameObject);
+        }
+        
+        if(Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.F))
+        {
+            if (transform.position.y > 5)
+            {
+                if ( transform.position.x >= -5.5 && transform.position.x <= -5)
+                {
+                    Debug.Log("Perfect");
+                }
+                else if (transform.position.x > -5 && transform.position.x < -4.5)
+                {
+                    Debug.Log("Great");
+                }
+                else if (transform.position.x > -4.5 && transform.position.x < -4)
+                {
+                    Debug.Log("Bad");
+                }
+            }
         }
     }
 }
