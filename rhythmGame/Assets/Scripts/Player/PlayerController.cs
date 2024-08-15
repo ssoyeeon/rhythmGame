@@ -74,21 +74,10 @@ public class PlayerController : MonoBehaviour
                 if(jumpCoolTime <= 0)
                 {
                     Jump();
-                    DownAttack();
-                    jumpCoolTime = 0.2f;                //점프 쿨타임 줍니다요오
+                    jumpCoolTime = 0.3f;                //점프 쿨타임 줍니다요오
                 }
             }
             jumpCoolTime -= Time.deltaTime;             //점프 쿨타임 없애 없애~~
-
-            if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.K))
-            {
-                if (attackCoolTime <= 0)
-                {
-                    DownAttack();                           //공격 공격
-                    attackCoolTime = 0.2f;              //어택 쿨타임을 줍니다요오
-                }
-            }
-            attackCoolTime -= Time.deltaTime;   //어택 쿨타임 없애 없애
         }
     }
 
@@ -97,11 +86,6 @@ public class PlayerController : MonoBehaviour
         //함수 총집합!!
     }
     
-    void DownAttack()                           //플레이어가 때릴 때 나타나게 됩니다.
-    {
-        
-    }
-
     void Jump()
     {
         player.transform.position = new Vector3(-7, jumpPosition, 0);       //점프 점프

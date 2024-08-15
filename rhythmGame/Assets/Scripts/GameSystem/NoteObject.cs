@@ -9,8 +9,7 @@ public class NoteObject : MonoBehaviour
     public float hitPosition;       //판저ㅇ 위치 
     public float startTime;         //게이ㅁ 시자ㄱ 시간
 
-    public float perfect1 = 3f;
-    public float perfect2 = 1f;
+    public float attackCoolTime;    //공격 쿨타임
 
     //노트 오브젝ㅌㅡ 초기화
 
@@ -27,7 +26,7 @@ public class NoteObject : MonoBehaviour
     }
     void Start()
     {
-        
+        attackCoolTime = 0;
     }
 
     // Update is called once per frame
@@ -42,21 +41,59 @@ public class NoteObject : MonoBehaviour
             Destroy(gameObject);
         }
         
+        //노트 파괴!
         if(Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.F))
         {
-            if (transform.position.y > 5)
+            if (transform.position.y > 5 && attackCoolTime == 0)
             {
-                if ( transform.position.x >= -5.5 && transform.position.x <= -5)
+                if (transform.position.x >= -5.5 && transform.position.x <= -4.5)
                 {
                     Debug.Log("Perfect");
-                }
-                else if (transform.position.x > -5 && transform.position.x < -4.5)
-                {
-                    Debug.Log("Great");
+                    Destroy(gameObject);
+                    attackCoolTime = 0.3f;
+                    attackCoolTime -= Time.deltaTime;
                 }
                 else if (transform.position.x > -4.5 && transform.position.x < -4)
                 {
+                    Debug.Log("Great");
+                    Destroy(gameObject);
+                    attackCoolTime = 0.3f;
+                    attackCoolTime -= Time.deltaTime;
+                }
+                else if (transform.position.x > -4 && transform.position.x < -3.5)
+                {
                     Debug.Log("Bad");
+                    Destroy(gameObject);
+                    attackCoolTime = 0.3f;
+                    attackCoolTime -= Time.deltaTime;
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.J) || Input.GetKeyDown(KeyCode.K))
+        {
+            if (transform.position.y < 3)
+            {
+                if (transform.position.x >= -5.5 && transform.position.x <= -4.5)
+                {
+                    Debug.Log("Perfect");
+                    Destroy(gameObject);
+                    attackCoolTime = 0.3f;
+                    attackCoolTime -= Time.deltaTime;
+                }
+                else if (transform.position.x > -4.5 && transform.position.x < -4)
+                {
+                    Debug.Log("Great");
+                    Destroy(gameObject);
+                    attackCoolTime = 0.3f;
+                    attackCoolTime -= Time.deltaTime;
+                }
+                else if (transform.position.x > -4 && transform.position.x < -3.5)
+                {
+                    Debug.Log("Bad");
+                    Destroy(gameObject);
+                    attackCoolTime = 0.3f;
+                    attackCoolTime -= Time.deltaTime;
                 }
             }
         }
