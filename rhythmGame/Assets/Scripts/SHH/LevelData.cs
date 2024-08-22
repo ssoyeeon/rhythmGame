@@ -11,6 +11,8 @@ namespace RhythmGame
         public int unlockLevel;             // 해금 레벨
         [Range(1, 20)] 
         public int difficulty;              // 음악의 난이도
+        public Sprite LevelImage;           // 레벨의 이미지
+
         public NoteObject noteData;         // 노트 데이터
         public List<ClearReward> clearRewards;  // 클리어에 따른 보상
     }

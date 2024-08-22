@@ -45,29 +45,17 @@ namespace RhythmGame
         private Dictionary<string, LevelData> levels = new Dictionary<string, LevelData>();      // ·¹º§µé
         private List<string> levelKeys;
 
-        void Start()
+        private int levelIndex;
+        private int levelCount;
+
+        void Awake()
         {
-
-        }
-        private void AddLevelDataToDictionary()
-        {
-            if(levelObjects.Count < 0)
+            if (levels.Count < 0 || levels == null)
             {
-                return;
-            }
-
-            for(int i = 0; i < levelObjects.Count; i ++)
-            {
-                string levelKey = levelObjects[i].levelName.ToString() + "_" + levelObjects[i].difficulty.ToString();
-
-                if(!levels.ContainsKey(levelKey))
-                {
-                    LevelData levelData = new LevelData(levelObjects[i]);
-                    levels.Add(levelKey, levelData);
-                    levelKeys.Add(levelKey);
-                }
+                AddLevelDataToDictionary();
             }
         }
+
         public LevelData GetLevelDataFromDictionary(string levelKey, string levelName = null, int levelDifficulty = -1)
         {
             if(levelKey == null)
@@ -88,7 +76,54 @@ namespace RhythmGame
             return null;
         }
 
+        private void AddLevelDataToDictionary()
+        {
+            if (levelObjects.Count < 0)
+            {
+                return;
+            }
 
+            for (int i = 0; i < levelObjects.Count; i++)
+            {
+                string levelKey = levelObjects[i].levelName.ToString() + "_" + levelObjects[i].difficulty.ToString();
+
+                if (!levels.ContainsKey(levelKey))
+                {
+                    LevelData levelData = new LevelData(levelObjects[i]);
+                    levels.Add(levelKey, levelData);
+                    levelKeys.Add(levelKey);
+                }
+            }
+
+            levelCount = levels.Count;
+        }
+
+        private LevelData GetLevelDataByIndex(Enums.Modifier modifier)
+        {
+            if(modifier != Enums.Modifier.NONE)
+            {
+                if (modifier == Enums.Modifier.POSITIVE)
+                {
+                    levelIndex++;
+
+                    if (levelIndex >= levelCount)
+                    {
+                        levelIndex = 0;
+                    }
+                }
+                else
+                {
+                    levelIndex--;
+
+                    if(levelIndex < 0)
+                    {
+                        levelIndex = levelCount - 1;
+                    }
+                }
+            }
+
+            return levels[levelKeys[levelIndex]];
+        }
     }
 }
 
