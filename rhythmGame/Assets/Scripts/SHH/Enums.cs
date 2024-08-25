@@ -7,7 +7,9 @@ namespace RhythmGame
     public class Enums
     {
 
-
+        /// <summary>
+        /// 값을 변화할때 사용함
+        /// </summary>
         public enum Modifier
         {
             /// <summary>

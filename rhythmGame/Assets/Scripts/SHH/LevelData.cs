@@ -13,7 +13,7 @@ namespace RhythmGame
         public int difficulty;              // 음악의 난이도
         public Sprite LevelImage;           // 레벨의 이미지
 
-        public NoteObject noteData;         // 노트 데이터
+        public SequenceData noteData;         // 노트 데이터
         public List<ClearReward> clearRewards;  // 클리어에 따른 보상
     }
     [System.Serializable]
