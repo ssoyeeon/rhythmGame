@@ -16,5 +16,5 @@ MonoBehaviour:
   unlockLevel: 0
   difficulty: 5
   LevelImage: {fileID: 21300000, guid: d73f5085de5cb104cbdfc37c0540510f, type: 3}
-  noteData: {fileID: 0}
+  noteData: {fileID: 11400000, guid: 98b77401d3a81a545af29ade7b662669, type: 2}
   clearRewards: []

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using TMPro;
 
 namespace RhythmGame
 {
@@ -97,30 +98,35 @@ namespace RhythmGame
                 }
             }
 
-            for(int i = 0; i < levelButtons.Count; i ++)
+            for (int i = 0; i < levelButtons.Count; i++)
             {
-                if(levels.Count <= i)
+                if (levels.Count <= i || i >= levelKeys.Count)
                 {
                     levelButtons[i].gameObject.SetActive(false);
                 }
                 else
                 {
-                    levelButtons[i].transform.GetChild(0).GetComponent<Text>().text = levels[levelKeys[i]].GetLevelObject().levelName;
-                    levelButtons[i].onClick.AddListener(() =>StartLevel(levels[levelKeys[i]]));
+                    levelButtons[i].transform.GetChild(0).GetComponent<TMP_Text>().text = levels[levelKeys[i]].GetLevelObject().levelName;
 
-                    if(levels[levelKeys[i]].GetLevelObject().LevelImage)
+                    // 현재 인덱스를 로컬 변수에 저장
+                    int currentIndex = i;
+
+                    levelButtons[currentIndex].onClick.AddListener(() => StartLevel(levels[levelKeys[currentIndex]]));
+
+                    if (levels[levelKeys[currentIndex]].GetLevelObject().LevelImage)
                     {
-                        levelButtons[i].image.sprite = levels[levelKeys[i]].GetLevelObject().LevelImage;
+                        levelButtons[currentIndex].image.sprite = levels[levelKeys[currentIndex]].GetLevelObject().LevelImage;
                     }
                 }
-
             }
+
         }
         public void StartLevel(LevelData levelData)
         {
-            Debug.Log("게임 시작!");
+            Debug.Log("게임 시작!" + levelData.GetLevelObject().levelName.ToString());
             // 추가예정
         }
+
         /// <summary>
         /// 레벨데이터를 딕셔너리에서 찾아옴
         /// </summary>
