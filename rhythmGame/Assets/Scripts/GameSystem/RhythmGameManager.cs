@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class RhythmGameManager : MonoBehaviour
 {
     public SequenceData sequenceData;
     public NoteManager noteManager;
@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        sequenceData = GameManager.Instance.LevelData.GetLevelObject().noteData;
+
         if (sequenceData == null)
         {
             Debug.LogError("sequenceData null");
@@ -58,7 +60,7 @@ public class GameManager : MonoBehaviour
                 {
                     float startTime = beatIndex * 60f / sequenceData.bpm;
                     float durtaion = noteVaule * 60f  / sequenceData.bpm;
-                    Note note = new Note(trackIndex, startTime, durtaion);
+                    Note note = new Note(trackIndex, startTime, durtaion, noteVaule);
                     noteManager.AddNote(note);
                 }
             }

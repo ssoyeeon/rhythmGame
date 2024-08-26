@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 namespace RhythmGame
@@ -124,6 +125,8 @@ namespace RhythmGame
         public void StartLevel(LevelData levelData)
         {
             Debug.Log("게임 시작!" + levelData.GetLevelObject().levelName.ToString());
+            GameManager.Instance.SetLevelData(levelData);
+            SceneManager.LoadScene("GameScene");
             // 추가예정
         }
 

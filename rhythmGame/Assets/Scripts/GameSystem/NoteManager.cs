@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class NoteManager : MonoBehaviour
 {
-    public PlayerController playercontroller;
+    public static NoteManager instance;
+    public ScoreManager scoreManager;
+    public Player player;
 
     public AudioClip audioClip;                         //재생할 오디오 클립
     public List<Note> notes = new List<Note>();         //모든 노트 정보를 담는 리스트
@@ -18,13 +21,23 @@ public class NoteManager : MonoBehaviour
 
     private AudioSource audioSource;                    //오디오 소스 컴퍼넌트
     private float startTime;                            //게임 시작 시간
-    private List<Note> activeNotes = new List<Note>();  //아지ㄱ 생ㅅㅓㅇ되지 않ㅇㅡㄴ 노트 리스트 
+    [SerializeField]private List<Note> activeNotes = new List<Note>();  //아지ㄱ 생ㅅㅓㅇ되지 않ㅇㅡㄴ 노트 리스트 
+
+    public List<NoteObject> nowNotes = new List<NoteObject>();     //쳐야하는 노트들을 순서대로 저장하는 리스트
+
     private float spawnOffset;                          //노드 생성 시간 오프셋
 
     public bool debugMode = false;                      //디버그 모드 플래그
     public GameObject hitPositionMarker;                //판정 위치 마커 오브젝트
 
     public float initialDelay = 3f;                     //초기 지연 시간
+
+    public Queue<NoteObject> notePool = new Queue<NoteObject>();
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     //게임 초기화
     public void Initialized()
@@ -36,39 +49,44 @@ public class NoteManager : MonoBehaviour
         activeNotes.AddRange(notes);
         spawnOffset = (10 - hitPosition) / noteSpeed;           //노트 생성 시간 오프셋 계산
 
-        playercontroller.notes = this.notes;                    //노트 플레이어한테 보내깅
-
         if (debugMode)
         {
             CreateHitPositionMarker();
-        }    
+        }
 
-        StartCoroutine(StartAudioWithDelay());                  //지연 후 오디오 재생 코루틴 시작
+        //StartCoroutine(StartAudioWithDelay());                  //지연 후 오디오 재생 코루틴 시작
+        AudioPlay();
     }
 
-
+    private void AudioPlay()
+    {
+        double StartTime = AudioSettings.dspTime + initialDelay;
+        audioSource.PlayScheduled(StartTime);
+    }
 
     //지연 후 오디오 재생을 위한 코루틴
-    private IEnumerator StartAudioWithDelay()
-    {
-        yield return new WaitForSeconds(initialDelay);
-        audioSource.Play();
-    }
+    //private IEnumerator StartAudioWithDelay()
+    //{
+    //    yield return new WaitForSeconds(initialDelay);
+    //    audioSource.Play();
+    //}
 
     void Update()
     {
         float currentTime = Time.time -  startTime;     //현재 게임 시간을 계산
-        
+
+  
+
         //활성화된 노트를 처리
-        for(int i = activeNotes.Count -1; i >= 0; i--)
+        for (int i = activeNotes.Count - 1; i >= 0; i--)
         {
             Note note = activeNotes[i];
-            if(currentTime >= note.startTime - spawnOffset && currentTime < note.startTime + note.duration)
+            if (currentTime >= note.startTime - spawnOffset && currentTime < note.startTime + note.duration)
             {
-                SpawnNoteObject(note);
+                notePoolDequeue(note);
                 activeNotes.RemoveAt(i);
             }
-            else if(currentTime >= note.startTime + note.duration)
+            else if (currentTime >= note.startTime + note.duration)
             {
                 activeNotes.RemoveAt(i);
             }
@@ -89,13 +107,33 @@ public class NoteManager : MonoBehaviour
     {
         GameObject noteObject = Instantiate(notePrefabs, new Vector3(10,note.trackIndex * 2, 0),Quaternion.identity);
         noteObject.GetComponent<NoteObject>().Initialized(note, noteSpeed, hitPosition, startTime);
-
+        nowNotes.Add(noteObject.GetComponent<NoteObject>());
     }
 
     //오디오 지연 시간 조정
     public void AdjustAudioLatency(float latency)
     {
         audioLatency = latency;
+    }
+
+    public void notePoolEnqueue(NoteObject targetNote)
+    {
+        notePool.Enqueue(targetNote);
+        targetNote.gameObject.SetActive(false);
+        nowNotes.Remove(targetNote);
+    }
+    public void notePoolDequeue(Note note)
+    {
+        if (notePool.Count > 0)
+        {
+            NoteObject temp = notePool.Dequeue();
+            temp.Initialized(note, noteSpeed, hitPosition, startTime);
+            nowNotes.Add(temp);
+        }
+        else
+        {
+            SpawnNoteObject(note);
+        }
     }
 
     //디버그용 판정 위치 마커 생성
