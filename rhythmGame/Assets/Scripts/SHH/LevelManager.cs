@@ -65,8 +65,20 @@ namespace RhythmGame
         private int levelIndex;
         private int levelCount;
 
-        void Awake()
+        public static LevelManager Instance;
+
+        private void Awake()
         {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+
             if (levelObjects.Count != 0 || levelObjects != null)
             {
                 AddLevelDataToDictionary();
@@ -74,6 +86,7 @@ namespace RhythmGame
 
             SetLevelButtons(Buttons);
         }
+
         /// <summary>
         /// 버튼을 세팅하는 함수
         /// 버튼의 수가 레벨의 수보다 많을 경우 이후 버튼들은 비활성화 함

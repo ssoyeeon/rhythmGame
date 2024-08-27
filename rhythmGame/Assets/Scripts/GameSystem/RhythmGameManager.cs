@@ -21,7 +21,7 @@ public class RhythmGameManager : MonoBehaviour
 
         sequenceData.LoadFromJson();
 
-        if(sequenceData.trackNotes == null || sequenceData.trackNotes.Count == 0 )
+        if (sequenceData.trackNotes == null || sequenceData.trackNotes.Count == 0)
         {
             initializeTrackNotes();
         }
