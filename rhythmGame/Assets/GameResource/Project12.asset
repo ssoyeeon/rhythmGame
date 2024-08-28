@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de5b9613662d03248ba7a7633606865e, type: 3}
   m_Name: Project12
   m_EditorClassIdentifier: 
-  levelName: Project 12
+  levelName: Bright New Day
   unlockLevel: 0
   difficulty: 5
   LevelImage: {fileID: 21300000, guid: d73f5085de5cb104cbdfc37c0540510f, type: 3}

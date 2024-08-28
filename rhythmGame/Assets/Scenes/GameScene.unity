@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreManager: {fileID: 454356065}
   player: {fileID: 1923334145}
-  audioClip: {fileID: 0}
+  audioClip: {fileID: 8300000, guid: 529ae15b9d8e79c479db8a0c93675c82, type: 3}
   notes: []
   bpm: 120
   speed: 1
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33001c5cb15894642951b4cea7489c16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sequenceData: {fileID: 11400000, guid: c699ef2692c95664ebfa52fea4f5419b, type: 2}
+  sequenceData: {fileID: 11400000, guid: ef90ad80276fbe849af48acb67859d30, type: 2}
   noteManager: {fileID: 281492324}
   playbackSpeed: 1
 --- !u!4 &1021172843
