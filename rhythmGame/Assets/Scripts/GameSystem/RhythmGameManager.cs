@@ -7,11 +7,18 @@ public class RhythmGameManager : MonoBehaviour
     public SequenceData sequenceData;
     public NoteManager noteManager;
     public float playbackSpeed = 1.0f;
+
+    public bool IsDebug = false;                //디버그 모드 활성화
+
     private bool notesGenerated = false;
 
     void Start()
     {
-        sequenceData = GameManager.Instance.LevelData.GetLevelObject().noteData;
+        if(IsDebug == false)
+        {
+            sequenceData = GameManager.Instance.LevelData.GetLevelObject().noteData;
+        }
+        
 
         if (sequenceData == null)
         {

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class NoteManager : MonoBehaviour
 {
     public static NoteManager instance;
     public ScoreManager scoreManager;
     public Player player;
+    public PoolManager poolManager;
 
     public AudioClip audioClip;                         //재생할 오디오 클립
     public List<Note> notes = new List<Note>();         //모든 노트 정보를 담는 리스트
@@ -83,7 +85,10 @@ public class NoteManager : MonoBehaviour
             Note note = activeNotes[i];
             if (currentTime >= note.startTime - spawnOffset && currentTime < note.startTime + note.duration)
             {
-                notePoolDequeue(note);
+                GameObject temp = poolManager.SpawnFromPool("Note", new Vector3(10, note.trackIndex * 2, 0), Quaternion.identity);
+                temp.GetComponent<NoteObject>().Initialized(note, noteSpeed, hitPosition, startTime);
+                nowNotes.Add(temp.GetComponent<NoteObject>());
+                //notePoolDequeue(note);
                 activeNotes.RemoveAt(i);
             }
             else if (currentTime >= note.startTime + note.duration)

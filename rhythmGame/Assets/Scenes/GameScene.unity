@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scoreManager: {fileID: 454356065}
   player: {fileID: 1923334145}
+  poolManager: {fileID: 296949306}
   audioClip: {fileID: 8300000, guid: 529ae15b9d8e79c479db8a0c93675c82, type: 3}
   notes: []
   bpm: 120
@@ -213,7 +214,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pools:
   - tag: Note
-    poolObject: {fileID: 0}
+    poolObject: {fileID: 1687551803}
     prefab: {fileID: 4171939652226879388, guid: 16efcd92ef1f72741b2566857ac96ce2, type: 3}
     size: 10
 --- !u!4 &296949307
@@ -286,7 +287,7 @@ GameObject:
   - component: {fileID: 1021172843}
   - component: {fileID: 1021172842}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: RhythmGameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -307,6 +308,7 @@ MonoBehaviour:
   sequenceData: {fileID: 11400000, guid: ef90ad80276fbe849af48acb67859d30, type: 2}
   noteManager: {fileID: 281492324}
   playbackSpeed: 1
+  IsDebug: 1
 --- !u!4 &1021172843
 Transform:
   m_ObjectHideFlags: 0
@@ -317,6 +319,50 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.8944365, y: 0.2800989, z: -0.84923863}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1376279053
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1376279055}
+  - component: {fileID: 1376279054}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1376279054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376279053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a69f8a79e35bce4b850883d562623d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1376279055
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376279053}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -416,6 +462,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1687551802
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1687551803}
+  m_Layer: 0
+  m_Name: SetOffPoolObjectTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1687551803
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1687551802}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1923334144
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,3 +641,5 @@ SceneRoots:
   - {fileID: 454356066}
   - {fileID: 1923334146}
   - {fileID: 296949307}
+  - {fileID: 1687551803}
+  - {fileID: 1376279055}

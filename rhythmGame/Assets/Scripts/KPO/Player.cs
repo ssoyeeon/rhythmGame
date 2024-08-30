@@ -55,17 +55,17 @@ public class Player : MonoBehaviour
         if(LeftInput && RightInput)
         {
             trackIndex = 3;
-            Debug.Log("동시입력");
+            //Debug.Log("동시입력");
         }
         else if(LeftInput)
         {
-            trackIndex = 1;
-            Debug.Log("왼쪽입력");
+            trackIndex = 2;
+            //Debug.Log("오른쪽입력");
         }
         else if (RightInput)
         {
-            trackIndex = 2;
-            Debug.Log("오른쪽입력");
+            trackIndex = 1;
+            //Debug.Log("왼쪽입력");
         }
 
         LeftInput = false;

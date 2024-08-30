@@ -37,11 +37,12 @@ public class NoteObject : MonoBehaviour
         transform.Translate(Vector3.left * speed * Time.deltaTime);
 
         //판정 위치를 지나면 파괴
-        if(transform.position.x < hitPosition - 1)
+        if(transform.position.x <= hitPosition - 1)
         {
-            noteManager.notePoolEnqueue(this);
-            noteManager.scoreManager.ResetCombo();
-            Debug.Log("Miss");
+            //noteManager.notePoolEnqueue(this);
+            noteManager.poolManager.ReturnToPool(this.gameObject);
+            NoteManager.instance.scoreManager.AddScore(Timing.Miss);
+            //Debug.Log("Miss");
         }
     }
 
@@ -53,26 +54,31 @@ public class NoteObject : MonoBehaviour
 
         if (note.noteValue == noteindex)
         {
-            if (distance < 0.5f)
+            if (distance < 0.3f)
             {
                 Debug.Log("Perfect");
-                NoteManager.instance.scoreManager.AddScore(10);
+                NoteManager.instance.scoreManager.AddScore(Timing.Perfect);
+            }
+            else if (distance < 0.5f)
+            {
+                Debug.Log("Great");
+                NoteManager.instance.scoreManager.AddScore(Timing.Great);
             }
             else if (distance < 0.7f)
             {
-                Debug.Log("Great");
-                NoteManager.instance.scoreManager.AddScore(5);
+                Debug.Log("Good");
+                NoteManager.instance.scoreManager.AddScore(Timing.Good);
             }
             else
             {
                 Debug.Log("Bad");
-                NoteManager.instance.scoreManager.AddScore(1);
+                NoteManager.instance.scoreManager.AddScore(Timing.Bad);
             }
         }
         else
         {
-            Debug.Log("Miss");
-            NoteManager.instance.scoreManager.ResetCombo();
+            //Debug.Log("Miss");
+            NoteManager.instance.scoreManager.AddScore(Timing.Miss);
         }
         NoteManager.instance.notePoolEnqueue(this);
     }
