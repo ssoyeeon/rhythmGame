@@ -5,12 +5,14 @@ using UnityEngine;
 
 public class NoteObject : MonoBehaviour
 {
+    public Sprite[] NoteSprites = new Sprite[3];
     public Note note;               //노트 정보
     public float speed;             //노트 이동 속도 
     public float hitPosition;       //판정 위치 
     public float startTime;         //게임 시작 시간
 
     private NoteManager noteManager;
+    private SpriteRenderer noteImage;
 
     //노트 오브젝ㅌㅡ 초기화
 
@@ -24,7 +26,15 @@ public class NoteObject : MonoBehaviour
         //노트 초기 위치 설정
         float initalDistance = speed * (note.startTime - (Time.time - startTime));
         transform.position = new Vector3(hitPosition + initalDistance, yPos(note.noteValue), 0);
+
+        //노트 이미지 설정
+        noteImage.sprite = NoteSprites[note.noteValue - 1];
     }
+    private void Awake()
+    {
+        noteImage = GetComponent<SpriteRenderer>();
+    }
+
     void Start()
     {
         noteManager = NoteManager.instance;
@@ -85,9 +95,9 @@ public class NoteObject : MonoBehaviour
 
     private float yPos(int value)
     {
-        if(value == 1) return -2;
-        else if(value == 2) return 2;
-        else if (value == 3) return 0;
+        if(value == 1) return -1.5f;
+        else if(value == 2) return 0.2f;
+        else if (value == 3) return -0.65f;
 
         return 0;
     }
