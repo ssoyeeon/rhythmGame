@@ -12,6 +12,8 @@ public enum Timing
 }
 public class ScoreManager : MonoBehaviour
 {
+    public float HP { get; private set; }
+
     public float score { get; private set; }
 
     public int combo { get; private set; }
@@ -31,9 +33,14 @@ public class ScoreManager : MonoBehaviour
         score += (int)timing * (1 + combo * 0.1f);
         ScoreCount[(int)timing] += 1;
 
-        if (timing == Timing.Miss)
+        if (timing == Timing.Miss || timing == Timing.Bad)
         {
             combo = 0;
+            if (timing == Timing.Miss)
+            {
+                HP -= (HP * 0.05f + 5);
+
+            }
             return;
         }
 
@@ -47,6 +54,7 @@ public class ScoreManager : MonoBehaviour
 
     public void ResetScore()
     {
+        HP = 100;
         score = 0;
         MaxCombo = 0;
         combo = 0;

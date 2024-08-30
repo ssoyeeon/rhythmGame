@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public class NoteManager : MonoBehaviour
 {
     public static NoteManager instance;
+
     public ScoreManager scoreManager;
     public Player player;
     public PoolManager poolManager;
