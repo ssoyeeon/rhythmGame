@@ -102,17 +102,17 @@ TextureImporter:
         serializedVersion: 2
         x: 860
         y: 280
-        width: 91
+        width: 90
         height: 210
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: caf9ed8a4916fd44784056c759d892ab
-      internalID: -1912398250
+      spriteID: 6a1663b24297f184b9c6874c229a53bf
+      internalID: 1300262439
       vertices: []
       indices: 
       edges: []
@@ -121,19 +121,19 @@ TextureImporter:
       name: Note_1
       rect:
         serializedVersion: 2
-        x: 1150
+        x: 1151
         y: 290
         width: 119
         height: 120
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 60929b1971bd8b141b0829a7040da5af
-      internalID: -1798703516
+      spriteID: ee372084ff9aad6408ea60974ce6f433
+      internalID: 492833941
       vertices: []
       indices: 
       edges: []
@@ -144,17 +144,17 @@ TextureImporter:
         serializedVersion: 2
         x: 1920
         y: 280
-        width: 139
+        width: 140
         height: 580
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1eea99d9791ce2e40a17e811afe578f7
-      internalID: -347972208
+      spriteID: dca1ddfdda91de84198a65b258091f54
+      internalID: -776776028
       vertices: []
       indices: 
       edges: []
@@ -162,7 +162,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 12e785fbd084e654fbb1383bdc0113dc
+    spriteID: e3cc50e58a591a540943636876b1eb5d
     internalID: 0
     vertices: []
     indices: 
@@ -170,9 +170,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Note_0: -1912398250
-      Note_1: -1798703516
-      Note_2: -347972208
+      Note_0: 1300262439
+      Note_1: 492833941
+      Note_2: -776776028
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
