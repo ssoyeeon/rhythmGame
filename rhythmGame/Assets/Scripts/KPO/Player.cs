@@ -6,6 +6,9 @@ public class Player : MonoBehaviour
 {
     public float AttackCoolTime = 0.3f;
 
+    public Animator animator;
+    public Rigidbody2D rigidbody;
+
     private NoteManager noteManager;
     private float InputCurrentTime = 0.1f;      //동시 입력으로 인식하는 시간
 
@@ -21,6 +24,15 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(animator.GetBool("Grounded"))
+        {
+            //transform.position = new Vector3(-3.8f, -2.17f, 0);
+        }
+        else
+        {
+            //transform.position = new Vector3(-3.8f, -0.64f, 0);
+        }
+
         if (AttackCoolTime > 0)
         {
             AttackCoolTime -= Time.deltaTime;
@@ -51,22 +63,31 @@ public class Player : MonoBehaviour
 
     private void Attack()
     {
+        animator.SetBool("Attack", true);
         int trackIndex = 0;
         if(LeftInput && RightInput)
         {
             trackIndex = 3;
-            //Debug.Log("동시입력");
+            animator.SetBool("IsJumpping", true);
+            animator.SetBool("Grounded", false);
+            transform.position = new Vector3(-3.8f, -0.64f, 0);
         }
         else if(LeftInput)
         {
             trackIndex = 2;
-            //Debug.Log("오른쪽입력");
+            animator.SetBool("IsJumpping", true);
+            animator.SetBool("Grounded", false);
+            transform.position = new Vector3(-3.8f, -0.94f, 0);
         }
         else if (RightInput)
         {
             trackIndex = 1;
-            //Debug.Log("왼쪽입력");
+            animator.SetBool("IsJumpping", false);
+            animator.SetBool("Grounded", true);
+            transform.position = new Vector3(-3.8f, -2.17f, 0);
         }
+
+        rigidbody.velocity = Vector2.zero;
 
         LeftInput = false;
         RightInput = false;
