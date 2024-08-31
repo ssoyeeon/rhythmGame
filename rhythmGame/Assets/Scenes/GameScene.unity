@@ -1273,8 +1273,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 2
-  SkySpeedScale: 0.3
-  CloudSpeedScale: 0.6
+  SkySpeedScale: 0.1
+  CloudSpeedScale: 0.3
   GroundSpeedScale: 1
   SkyObject:
   - {fileID: 1112676216}
