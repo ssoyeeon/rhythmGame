@@ -8,6 +8,13 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public int score;
+
+    public int MissCount;
+    public int BadCount;
+    public int GoodCount;
+    public int GreatCount;
+    public int PerfectCount;
+
     public TMPro.TextMeshPro scoretext;
 
     private void Awake()
@@ -34,9 +41,15 @@ public class GameManager : MonoBehaviour
         LevelData = levelData;
     }
 
-    public void SendScore(float score ,int maxCombo)
+    public void SendScore(float score ,int maxCombo, int[] Count)
     {
         Score = score;
         MaxCombo = maxCombo;
+
+        MissCount = Count[0];
+        BadCount = Count[1];
+        GoodCount = Count[2];
+        GreatCount = Count[3];
+        PerfectCount = Count[4];
     }
 }

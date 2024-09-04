@@ -39,7 +39,7 @@ public class ScoreManager : MonoBehaviour
             if (timing == Timing.Miss)
             {
                 HP -= (HP * 0.05f + 5);
-
+                Debug.Log(HP);
             }
             return;
         }
@@ -64,6 +64,11 @@ public class ScoreManager : MonoBehaviour
     public int[] CheckCount()
     {
         return ScoreCount;
+    }
+
+    public void SendScore()
+    {
+        GameManager.Instance.SendScore(score, combo, ScoreCount);
     }
 
 }

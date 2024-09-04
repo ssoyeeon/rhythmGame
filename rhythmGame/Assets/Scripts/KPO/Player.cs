@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     public float AttackCoolTime = 0.3f;
 
     public Animator animator;
-    public Rigidbody2D rigidbody;
+    public Rigidbody2D m_rigidbody;
 
     private NoteManager noteManager;
     private float InputCurrentTime = 0.1f;      //동시 입력으로 인식하는 시간
@@ -87,7 +87,7 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(-3.8f, -2.17f, 0);
         }
 
-        rigidbody.velocity = Vector2.zero;
+        m_rigidbody.velocity = Vector2.zero;
 
         LeftInput = false;
         RightInput = false;

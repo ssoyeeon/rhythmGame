@@ -37,6 +37,8 @@ public class NoteManager : MonoBehaviour
 
     public Queue<NoteObject> notePool = new Queue<NoteObject>();
 
+    private bool GameOver = false;
+
     private void Awake()
     {
         instance = this;
@@ -78,7 +80,16 @@ public class NoteManager : MonoBehaviour
     {
         float currentTime = Time.time -  startTime;     //현재 게임 시간을 계산
 
-  
+        if (currentTime >= audioSource.clip.length + 2f || scoreManager.HP <= 0)
+        {
+            if (!GameOver)
+            {
+                GameOver = true;
+                scoreManager.SendScore();
+                Debug.Log("게임종료, 씬 전환이 필요하면 여기서 실행");
+            }
+            return;
+        }
 
         //활성화된 노트를 처리
         for (int i = activeNotes.Count - 1; i >= 0; i--)
