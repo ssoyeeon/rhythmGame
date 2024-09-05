@@ -2700,6 +2700,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a69f8a79e35bce4b850883d562623d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  score: 0
+  MissCount: 0
+  BadCount: 0
+  GoodCount: 0
+  GreatCount: 0
+  PerfectCount: 0
+  scoretext: {fileID: 0}
 --- !u!4 &1206659971
 Transform:
   m_ObjectHideFlags: 0
@@ -3110,7 +3117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.76937586, g: 1, b: 0.6933962, a: 1}
+  m_Color: {r: 1, g: 0.95233655, b: 0.6650944, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
