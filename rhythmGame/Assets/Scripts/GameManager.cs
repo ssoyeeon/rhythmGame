@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     public void SendScore(float score ,int maxCombo, int[] Count)
     {
         Score = score;
+        this.score = (int)score;
         MaxCombo = maxCombo;
 
         MissCount = Count[0];

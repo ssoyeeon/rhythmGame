@@ -86,7 +86,14 @@ public class NoteManager : MonoBehaviour
             {
                 GameOver = true;
                 scoreManager.SendScore();
-                Debug.Log("게임종료, 씬 전환이 필요하면 여기서 실행");
+                if(currentTime >= audioSource.clip.length + 2f)
+                {
+                    SceneManager.LoadScene("ScoreScene");
+                }
+                else if(scoreManager.HP <= 0)
+                {
+                    SceneManager.LoadScene("GameOverScene");
+                }
             }
             return;
         }

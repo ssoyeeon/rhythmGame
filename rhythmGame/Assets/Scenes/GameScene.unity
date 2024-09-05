@@ -1624,6 +1624,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a69f8a79e35bce4b850883d562623d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  score: 0
+  MissCount: 0
+  BadCount: 0
+  GoodCount: 0
+  GreatCount: 0
+  PerfectCount: 0
+  scoretext: {fileID: 0}
 --- !u!4 &1376279055
 Transform:
   m_ObjectHideFlags: 0
@@ -2574,7 +2581,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AttackCoolTime: 0.3
   animator: {fileID: 405452872}
-  rigidbody: {fileID: 1923334148}
+  m_rigidbody: {fileID: 1923334148}
 --- !u!4 &1923334146
 Transform:
   m_ObjectHideFlags: 0
