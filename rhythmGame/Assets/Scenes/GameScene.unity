@@ -208,6 +208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 101351960}
   - component: {fileID: 101351959}
+  - component: {fileID: 101351961}
   m_Layer: 0
   m_Name: HitPoint
   m_TagString: Untagged
@@ -282,6 +283,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &101351961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101351958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a4de65e0c48e6747ae3e2ef78b66345, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effect: {fileID: 3970113298899838668, guid: a051380969b497d4c934a8abadf7dc8a, type: 3}
 --- !u!1 &281492323
 GameObject:
   m_ObjectHideFlags: 0
@@ -1391,6 +1405,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1294258326}
   - component: {fileID: 1294258325}
+  - component: {fileID: 1294258327}
   m_Layer: 0
   m_Name: HitPoint (1)
   m_TagString: Untagged
@@ -1465,6 +1480,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1294258327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294258324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a4de65e0c48e6747ae3e2ef78b66345, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effect: {fileID: 3970113298899838668, guid: a051380969b497d4c934a8abadf7dc8a, type: 3}
 --- !u!1 &1348450427
 GameObject:
   m_ObjectHideFlags: 0
@@ -2579,9 +2607,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69db37e20578c13459c153f089270aaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttackCoolTime: 0.3
+  AttackCoolTime: 0
   animator: {fileID: 405452872}
   m_rigidbody: {fileID: 1923334148}
+  HitPointEffect:
+  - {fileID: 1294258327}
+  - {fileID: 101351961}
 --- !u!4 &1923334146
 Transform:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,6 +11,8 @@ public class NoteObject : MonoBehaviour
     public float speed;             //노트 이동 속도 
     public float hitPosition;       //판정 위치 
     public float startTime;         //게임 시작 시간
+
+    public GameObject[] HitCheckEffect = new GameObject[4];
 
     private NoteManager noteManager;
     private SpriteRenderer noteImage;
@@ -67,21 +70,26 @@ public class NoteObject : MonoBehaviour
             if (distance < 0.3f)
             {
                 Debug.Log("Perfect");
+
+                Instantiate(HitCheckEffect[0], transform.position, HitCheckEffect[0].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Perfect);
             }
             else if (distance < 0.5f)
             {
                 Debug.Log("Great");
+                Instantiate(HitCheckEffect[1], transform.position, HitCheckEffect[1].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Great);
             }
             else if (distance < 0.7f)
             {
                 Debug.Log("Good");
+                Instantiate(HitCheckEffect[2], transform.position, HitCheckEffect[2].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Good);
             }
             else
             {
                 Debug.Log("Bad");
+                Instantiate(HitCheckEffect[3], transform.position, HitCheckEffect[3].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Bad);
             }
         }

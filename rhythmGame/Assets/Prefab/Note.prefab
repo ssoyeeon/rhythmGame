@@ -109,3 +109,8 @@ MonoBehaviour:
   speed: 0
   hitPosition: 0
   startTime: 0
+  HitCheckEffect:
+  - {fileID: 5934334552573585533, guid: 72120024c3de0734097777d9b7faef93, type: 3}
+  - {fileID: 3350270152327495456, guid: 5e8a57d0d8a13fc418f9b0d28f0d8d9c, type: 3}
+  - {fileID: 8670161043501665119, guid: 080e662a5a262c747a011676009eb8b8, type: 3}
+  - {fileID: 9005429956961708847, guid: 2916b30e8ab2c9e43b45897d59d7ae28, type: 3}

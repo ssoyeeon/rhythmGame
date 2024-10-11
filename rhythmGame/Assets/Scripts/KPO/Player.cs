@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float AttackCoolTime = 0.3f;
+    public float AttackCoolTime = 0.1f;
 
     public Animator animator;
     public Rigidbody2D m_rigidbody;
@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
 
     private bool LeftInput = false;
     private bool RightInput = false;
+
+    public HitPointEvent[] HitPointEffect = new HitPointEvent[2];
 
     // Start is called before the first frame update
     void Start()
@@ -50,7 +52,17 @@ public class Player : MonoBehaviour
             RightInput = true;
         }
 
-        if(LeftInput || RightInput)
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            LeftInput = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            RightInput = true;
+        }
+
+        if (LeftInput || RightInput)
         {
             InputCurrentTime -= Time.deltaTime;
         }
@@ -64,6 +76,10 @@ public class Player : MonoBehaviour
     private void Attack()
     {
         animator.SetBool("Attack", true);
+
+        if (LeftInput) HitPointEffect[0].ShowEffect();
+        if (RightInput) HitPointEffect[1].ShowEffect();
+
         int trackIndex = 0;
         if(LeftInput && RightInput)
         {
@@ -91,7 +107,7 @@ public class Player : MonoBehaviour
 
         LeftInput = false;
         RightInput = false;
-        AttackCoolTime = 0.3f;
+        AttackCoolTime = 0.1f;
         InputCurrentTime = 0.1f;
 
         if (noteManager.nowNotes.Count == 0) return;
