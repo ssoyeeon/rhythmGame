@@ -12,7 +12,7 @@ public class NoteObject : MonoBehaviour
     public float hitPosition;       //판정 위치 
     public float startTime;         //게임 시작 시간
 
-    public GameObject[] HitCheckEffect = new GameObject[4];
+    public GameObject[] HitCheckEffect = new GameObject[5];
 
     private NoteManager noteManager;
     private SpriteRenderer noteImage;
@@ -52,9 +52,10 @@ public class NoteObject : MonoBehaviour
         //판정 위치를 지나면 파괴
         if(transform.position.x <= hitPosition - 1)
         {
-            //noteManager.notePoolEnqueue(this);
+            noteManager.notePoolEnqueue(this);
             noteManager.poolManager.ReturnToPool(this.gameObject);
             NoteManager.instance.scoreManager.AddScore(Timing.Miss);
+            Instantiate(HitCheckEffect[4], transform.position, HitCheckEffect[3].transform.rotation);
             //Debug.Log("Miss");
         }
     }
@@ -63,41 +64,37 @@ public class NoteObject : MonoBehaviour
     {
         float distance = Mathf.Abs(transform.position.x - hitPosition);
 
-        if (distance > 1) return;
+        if (distance > 2) return;
 
         if (note.noteValue == noteindex)
         {
-            if (distance < 0.3f)
+            if (distance < 0.5f)
             {
-                Debug.Log("Perfect");
+                //Debug.Log("Perfect");
 
                 Instantiate(HitCheckEffect[0], transform.position, HitCheckEffect[0].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Perfect);
             }
-            else if (distance < 0.5f)
+            else if (distance < 0.8f)
             {
-                Debug.Log("Great");
+                //Debug.Log("Great");
                 Instantiate(HitCheckEffect[1], transform.position, HitCheckEffect[1].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Great);
             }
-            else if (distance < 0.7f)
+            else if (distance < 1.1f)
             {
-                Debug.Log("Good");
+               // Debug.Log("Good");
                 Instantiate(HitCheckEffect[2], transform.position, HitCheckEffect[2].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Good);
             }
             else
             {
-                Debug.Log("Bad");
+                //Debug.Log("Bad");
                 Instantiate(HitCheckEffect[3], transform.position, HitCheckEffect[3].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Bad);
             }
         }
-        else
-        {
-            //Debug.Log("Miss");
-            NoteManager.instance.scoreManager.AddScore(Timing.Miss);
-        }
+      
         NoteManager.instance.notePoolEnqueue(this);
     }
 

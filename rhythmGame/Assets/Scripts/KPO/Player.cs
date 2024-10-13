@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
     public Rigidbody2D m_rigidbody;
 
     private NoteManager noteManager;
-    private float InputCurrentTime = 0.1f;      //동시 입력으로 인식하는 시간
+    private float InputCurrentTime = 0.03f;      //동시 입력으로 인식하는 시간
 
     private bool LeftInput = false;
     private bool RightInput = false;
@@ -107,8 +107,8 @@ public class Player : MonoBehaviour
 
         LeftInput = false;
         RightInput = false;
-        AttackCoolTime = 0.1f;
-        InputCurrentTime = 0.1f;
+        AttackCoolTime = 0.0f;
+        InputCurrentTime = 0.03f;
 
         if (noteManager.nowNotes.Count == 0) return;
         noteManager.nowNotes[0].HitCheck(trackIndex);

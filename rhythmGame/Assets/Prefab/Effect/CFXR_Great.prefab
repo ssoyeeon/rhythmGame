@@ -19798,7 +19798,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDynamic: 0
   text: GREAT
-  size: 0.5
+  size: 0.7
   letterSpacing: 0.35
   backgroundColor: {r: 0.11764706, g: 0.28518, b: 0.5803922, a: 1}
   color1: {r: 0.15686274, g: 1, b: 0.7770932, a: 1}

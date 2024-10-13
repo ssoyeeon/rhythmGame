@@ -39,7 +39,7 @@ public class ScoreManager : MonoBehaviour
             if (timing == Timing.Miss)
             {
                 HP -= (HP * 0.05f + 5);
-                Debug.Log(HP);
+                //Debug.Log(HP);
             }
             return;
         }
@@ -48,6 +48,7 @@ public class ScoreManager : MonoBehaviour
         if (combo > MaxCombo)
         {
             MaxCombo = combo;
+            HP += (HP * 0.01f + 5);
         }
         
     }
