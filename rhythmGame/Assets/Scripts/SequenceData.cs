@@ -24,12 +24,12 @@ public class SequenceData : ScriptableObject
         {
             bpm,
             numberOfTracks,
-            //audioClipPath = AssetDatabase.GetAssetPath(audioClip),
+            audioClipPath = AssetDatabase.GetAssetPath(audioClip),
             trackNotes
         }, Formatting.Indented);
 
-        //System.IO.File.WriteAllText(AssetDatabase.GetAssetPath(trackJsonFile), data);
-        //AssetDatabase.Refresh();
+        System.IO.File.WriteAllText(AssetDatabase.GetAssetPath(trackJsonFile), data);
+        AssetDatabase.Refresh();
     }
 
     public void LoadFromJson()

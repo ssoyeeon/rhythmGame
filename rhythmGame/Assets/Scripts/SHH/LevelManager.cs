@@ -1,39 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
 namespace RhythmGame
 {
-    /// <summary>
-    /// 레벨의 데이터를 저장함
-    /// </summary>
     [System.Serializable]
     public class LevelData
     {
         [SerializeField]
-        private int highScore;                  // 최고 점수
+        private int highScore;
         [SerializeField]
-        private int clearCount;                 // 클리어 횟수
+        private int clearCount;
         [SerializeField]
-        private int playCount;                  // 플레이 횟수
-        private LevelObject levelObject;        // 이 레벨의 데이터
-        
+        private int playCount;
+        private LevelObject levelObject;
+
         public LevelData(LevelObject _levelObject)
         {
             levelObject = _levelObject;
         }
-        /// <summary>
-        /// 하이스코어, 클리어카운트, 플레이 카운트 받음
-        /// </summary>
-        /// <param name="dataName">highScore, clearCount, playCount</param>
-        /// <returns>해당하는 값을 반환</returns>
+
         public int GetValue(string dataName)
         {
-            switch(dataName)
+            switch (dataName)
             {
                 case nameof(highScore):
                     return highScore;
@@ -45,10 +37,7 @@ namespace RhythmGame
                     return -1;
             }
         }
-        /// <summary>
-        /// 노트 데이터를 반환함
-        /// </summary>
-        /// <returns>LevelObject를 반환함</returns>
+
         public LevelObject GetLevelObject()
         {
             return levelObject;
@@ -57,104 +46,164 @@ namespace RhythmGame
 
     public class LevelManager : MonoBehaviour
     {
-        public List<LevelObject> levelObjects;              // 게임의 레벨들을 담을 리스트
-        private Dictionary<string, LevelData> levels = new Dictionary<string, LevelData>();      // 레벨들
+        public List<LevelObject> levelObjects;
+        private Dictionary<string, LevelData> levels = new Dictionary<string, LevelData>();
         private List<string> levelKeys = new List<string>();
-        public Button[] Buttons;                            // 추가하려면 여기에
-        private List<Button> levelButtons = new List<Button>();          // 레벨 버튼들
-        private int levelIndex;
-        private int levelCount;
+
+        public Button leftArrowButton;
+        public Button rightArrowButton;
+        public Image mainLevelImage;
+        public Image leftPreviewImage;
+        public Image rightPreviewImage;
+        public TextMeshProUGUI levelNameText;
+        public TextMeshProUGUI levelInfoText;
+
+        private int currentSelectedIndex = 0;
 
         public static LevelManager Instance;
 
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-                DontDestroyOnLoad(gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+        public float transitionDuration = 0.3f;
+        public AnimationCurve transitionCurve;
 
-            if (levelObjects.Count != 0 || levelObjects != null)
+        private bool isTransitioning = false;
+
+
+        private void Awake()
+        {           
+
+            if (levelObjects != null && levelObjects.Count != 0)
             {
                 AddLevelDataToDictionary();
             }
-
-            SetLevelButtons(Buttons);
         }
 
-        /// <summary>
-        /// 버튼을 세팅하는 함수
-        /// 버튼의 수가 레벨의 수보다 많을 경우 이후 버튼들은 비활성화 함
-        /// </summary>
-        /// <param name="buttons">레벨을 불러올 버튼들</param>
-        public void SetLevelButtons(Button[] buttons)
+        private void Start()
         {
-            if(levelButtons.Count == 0 || levelButtons == null)
-            {
-                foreach (var button in buttons)
-                {
-                    levelButtons.Add(button);
-                }
-            }
-            else
-            {
-                foreach (var button in buttons)
-                {
-                    if(!levelButtons.Contains(button))
-                    {
-                        levelButtons.Add(button);
-                    }
-                }
-            }
-
-            for (int i = 0; i < levelButtons.Count; i++)
-            {
-                if (levels.Count <= i || i >= levelKeys.Count)
-                {
-                    levelButtons[i].gameObject.SetActive(false);
-                }
-                else
-                {
-                    levelButtons[i].transform.GetChild(0).GetComponent<TMP_Text>().text = levels[levelKeys[i]].GetLevelObject().levelName;
-
-                    // 현재 인덱스를 로컬 변수에 저장
-                    int currentIndex = i;
-
-                    levelButtons[currentIndex].onClick.AddListener(() => StartLevel(levels[levelKeys[currentIndex]]));
-
-                    if (levels[levelKeys[currentIndex]].GetLevelObject().LevelImage)
-                    {
-                        levelButtons[currentIndex].image.sprite = levels[levelKeys[currentIndex]].GetLevelObject().LevelImage;
-                    }
-                }
-            }
-
+            SetupArrowButtons();
+            UpdateLevelDisplay();
         }
+
+        private void SetupArrowButtons()
+        {
+            if (leftArrowButton != null)
+                leftArrowButton.onClick.AddListener(SelectPreviousLevel);
+            if (rightArrowButton != null)
+                rightArrowButton.onClick.AddListener(SelectNextLevel);
+        }
+
+        private void SelectPreviousLevel()
+        {
+            if (!isTransitioning)
+            {
+                StartCoroutine(TransitionToLevel(-1));
+            }
+        }
+
+        private void SelectNextLevel()
+        {
+            if (!isTransitioning)
+            {
+                StartCoroutine(TransitionToLevel(1));
+            }
+        }
+
+        private IEnumerator TransitionToLevel(int direction)
+        {
+            isTransitioning = true;
+
+            int newIndex = (currentSelectedIndex + direction + levelKeys.Count) % levelKeys.Count;
+
+            // 시작 위치 설정
+            Vector2 mainStartPos = mainLevelImage.rectTransform.anchoredPosition;
+            Vector2 leftStartPos = leftPreviewImage.rectTransform.anchoredPosition;
+            Vector2 rightStartPos = rightPreviewImage.rectTransform.anchoredPosition;
+
+            // 목표 위치 설정
+            Vector2 mainEndPos = mainStartPos - new Vector2(direction * Screen.width, 0);
+            Vector2 leftEndPos = leftStartPos - new Vector2(direction * Screen.width, 0);
+            Vector2 rightEndPos = rightStartPos - new Vector2(direction * Screen.width, 0);
+
+            // 애니메이션
+            float elapsedTime = 0f;
+            while (elapsedTime < transitionDuration)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = transitionCurve.Evaluate(elapsedTime / transitionDuration);
+
+                mainLevelImage.rectTransform.anchoredPosition = Vector2.Lerp(mainStartPos, mainEndPos, t);
+                leftPreviewImage.rectTransform.anchoredPosition = Vector2.Lerp(leftStartPos, leftEndPos, t);
+                rightPreviewImage.rectTransform.anchoredPosition = Vector2.Lerp(rightStartPos, rightEndPos, t);
+
+                yield return null;
+            }
+
+            // 새 레벨로 업데이트
+            currentSelectedIndex = newIndex;
+            UpdateLevelDisplay();
+
+            // 위치 리셋
+            mainLevelImage.rectTransform.anchoredPosition = mainStartPos;
+            leftPreviewImage.rectTransform.anchoredPosition = leftStartPos;
+            rightPreviewImage.rectTransform.anchoredPosition = rightStartPos;
+
+            isTransitioning = false;
+        }
+
+        private void UpdateLevelDisplay()
+        {
+            if (levelKeys.Count == 0) return;
+
+            // 현재 레벨 정보 업데이트
+            UpdateLevelInfo(currentSelectedIndex, mainLevelImage, levelNameText, levelInfoText);
+
+            // 왼쪽 미리보기 업데이트
+            int leftIndex = (currentSelectedIndex - 1 + levelKeys.Count) % levelKeys.Count;
+            UpdatePreviewImage(leftIndex, leftPreviewImage);
+
+            // 오른쪽 미리보기 업데이트
+            int rightIndex = (currentSelectedIndex + 1) % levelKeys.Count;
+            UpdatePreviewImage(rightIndex, rightPreviewImage);
+            
+        }
+
+        private void UpdateLevelInfo(int index, Image image, TextMeshProUGUI nameText, TextMeshProUGUI infoText)
+        {
+            string levelKey = levelKeys[index];
+            LevelData levelData = levels[levelKey];
+            LevelObject levelObject = levelData.GetLevelObject();
+
+            if (image != null)
+                image.sprite = levelObject.LevelImage;
+            if (nameText != null)
+                nameText.text = levelObject.levelName;
+            if (infoText != null)
+                infoText.text = $" High Score: {levelData.GetValue("highScore")}" +
+                                $" Clear Count: {levelData.GetValue("clearCount")}" +
+                                $" Play Count: {levelData.GetValue("playCount")}";
+        }
+
+        private void UpdatePreviewImage(int index, Image image)
+        {
+            if (image != null)
+            {
+                string levelKey = levelKeys[index];
+                LevelObject levelObject = levels[levelKey].GetLevelObject();
+                image.sprite = levelObject.LevelImage;
+            }
+        }
+
         public void StartLevel(LevelData levelData)
         {
-            Debug.Log("게임 시작!" + levelData.GetLevelObject().levelName.ToString());
+            Debug.Log("게임 시작! " + levelData.GetLevelObject().levelName);
             GameManager.Instance.SetLevelData(levelData);
             SceneManager.LoadScene("GameScene");
-            // 추가예정
         }
 
-        /// <summary>
-        /// 레벨데이터를 딕셔너리에서 찾아옴
-        /// </summary>
-        /// <param name="levelKey">주로 사용함 키는 키 리스트에도 있음</param>
-        /// <param name="levelName">레벨의 이름과 난이도로 찾을때 씀</param>
-        /// <param name="levelDifficulty">레벨의 이름과 난이도로 찾을때 씀</param>
-        /// <returns>딕셔너리에서 레벨 데이터를 반환함</returns>
         public LevelData GetLevelDataFromDictionary(string levelKey, string levelName = null, int levelDifficulty = -1)
         {
-            if(levelKey == null)
+            if (levelKey == null)
             {
-                if(levelName == null || levelDifficulty == -1)
+                if (levelName == null || levelDifficulty == -1)
                 {
                     return null;
                 }
@@ -162,7 +211,7 @@ namespace RhythmGame
                 levelKey = levelName + "_" + levelDifficulty.ToString();
             }
 
-            if(levelKeys.Contains(levelKey))
+            if (levelKeys.Contains(levelKey))
             {
                 return levels[levelKey];
             }
@@ -170,65 +219,47 @@ namespace RhythmGame
             return null;
         }
 
-        /// <summary>
-        /// 레벨 데이터들을 딕셔너리에 넣음
-        /// 처음 한번만 실행하는 함수임
-        /// </summary>
+        private void Update()
+        {
+            if (!isTransitioning)
+            {
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                {
+                    SelectPreviousLevel();
+                }
+                else if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    SelectNextLevel();
+                }
+                else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+                {
+                    StartSelectedLevel();
+                }
+            }
+        }
 
         private void AddLevelDataToDictionary()
         {
-            if (levelObjects.Count == 0)
+            foreach (var levelObject in levelObjects)
             {
-                return;
-            }
-
-            for (int i = 0; i < levelObjects.Count; i++)
-            {
-                string levelKey = levelObjects[i].levelName.ToString() + "_" + levelObjects[i].difficulty.ToString();
+                string levelKey = levelObject.levelName + "_" + levelObject.difficulty.ToString();
 
                 if (!levels.ContainsKey(levelKey))
                 {
-                    LevelData levelData = new LevelData(levelObjects[i]);
+                    LevelData levelData = new LevelData(levelObject);
                     levels.Add(levelKey, levelData);
                     levelKeys.Add(levelKey);
-                    Debug.Log(levelData.GetLevelObject().levelName.ToString() + "is Added in Dictionary");
+                    Debug.Log($"{levelObject.levelName} is Added in Dictionary");
                 }
             }
-
-            levelCount = levels.Count;
         }
-        /// <summary>
-        /// 인덱스를 통해 호출할때 사용함
-        /// 인덱스라 함은 레벨의 순서대로 1234 돌아감 인덱스는 이 클래스 내에 있는 인덱스임
-        /// </summary>
-        /// <param name="modifier"></param>
-        /// <returns>딕셔너리에 있는 레벨 데이터를 반환해옴</returns>
-        private LevelData GetLevelDataByIndex(Enums.Modifier modifier)
+
+        public void StartSelectedLevel()
         {
-            if(modifier != Enums.Modifier.NONE)
+            if (levelKeys.Count > 0)
             {
-                if (modifier == Enums.Modifier.POSITIVE)
-                {
-                    levelIndex++;
-
-                    if (levelIndex >= levelCount)
-                    {
-                        levelIndex = 0;
-                    }
-                }
-                else
-                {
-                    levelIndex--;
-
-                    if(levelIndex < 0)
-                    {
-                        levelIndex = levelCount - 1;
-                    }
-                }
+                StartLevel(levels[levelKeys[currentSelectedIndex]]);
             }
-
-            return levels[levelKeys[levelIndex]];
         }
     }
 }
-

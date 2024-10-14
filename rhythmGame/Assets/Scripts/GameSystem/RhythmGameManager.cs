@@ -14,11 +14,7 @@ public class RhythmGameManager : MonoBehaviour
 
     void Start()
     {
-        if(IsDebug == false)
-        {
-            sequenceData = GameManager.Instance.LevelData.GetLevelObject().noteData;
-        }
-        
+        sequenceData = GameManager.Instance.LevelData.GetLevelObject().noteData;
 
         if (sequenceData == null)
         {

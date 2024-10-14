@@ -94,6 +94,14 @@ public class NoteObject : MonoBehaviour
                 NoteManager.instance.scoreManager.AddScore(Timing.Bad);
             }
         }
+        else
+        {           
+            noteManager.notePoolEnqueue(this);
+            noteManager.poolManager.ReturnToPool(this.gameObject);
+            NoteManager.instance.scoreManager.AddScore(Timing.Miss);
+            Instantiate(HitCheckEffect[4], transform.position, HitCheckEffect[3].transform.rotation);
+             
+        }
       
         NoteManager.instance.notePoolEnqueue(this);
     }

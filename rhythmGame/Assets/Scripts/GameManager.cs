@@ -15,8 +15,6 @@ public class GameManager : MonoBehaviour
     public int GreatCount;
     public int PerfectCount;
 
-    public TMPro.TextMeshPro scoretext;
-
     private void Awake()
     {
         if(Instance == null)
