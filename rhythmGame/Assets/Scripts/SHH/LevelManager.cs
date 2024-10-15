@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using DG.Tweening;
 
 namespace RhythmGame
 {
@@ -50,26 +51,32 @@ namespace RhythmGame
         private Dictionary<string, LevelData> levels = new Dictionary<string, LevelData>();
         private List<string> levelKeys = new List<string>();
 
-        public Button leftArrowButton;
-        public Button rightArrowButton;
-        public Image mainLevelImage;
-        public Image leftPreviewImage;
-        public Image rightPreviewImage;
+        public RectTransform levelItemsContainer;
+        public GameObject levelItemPrefab;
+        public float rotationRadius = 300f;
+        public float rotationDuration = 0.5f;
+        public float centerScaleFactor = 1.2f;
+        public GameObject selectionIndicatorPrefab;
+
+        private int currentSelectedIndex = 0;
+        private List<RectTransform> levelItems = new List<RectTransform>();
+        private List<GameObject> selectionIndicators = new List<GameObject>();
+
         public TextMeshProUGUI levelNameText;
         public TextMeshProUGUI levelInfoText;
 
-        private int currentSelectedIndex = 0;
-
         public static LevelManager Instance;
 
-        public float transitionDuration = 0.3f;
-        public AnimationCurve transitionCurve;
-
-        private bool isTransitioning = false;
-
-
         private void Awake()
-        {           
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                Destroy(gameObject);
+            }
 
             if (levelObjects != null && levelObjects.Count != 0)
             {
@@ -79,116 +86,117 @@ namespace RhythmGame
 
         private void Start()
         {
-            SetupArrowButtons();
+            CreateLevelItems();
             UpdateLevelDisplay();
         }
 
-        private void SetupArrowButtons()
+        private void CreateLevelItems()
         {
-            if (leftArrowButton != null)
-                leftArrowButton.onClick.AddListener(SelectPreviousLevel);
-            if (rightArrowButton != null)
-                rightArrowButton.onClick.AddListener(SelectNextLevel);
+            float angleStep = 360f / levelKeys.Count;
+            for (int i = 0; i < levelKeys.Count; i++)
+            {
+                GameObject levelItemGO = Instantiate(levelItemPrefab, levelItemsContainer);
+                RectTransform levelItemRect = levelItemGO.GetComponent<RectTransform>();
+                Image levelItemImage = levelItemGO.GetComponent<Image>();
+
+                LevelData levelData = levels[levelKeys[i]];
+                levelItemImage.sprite = levelData.GetLevelObject().LevelImage;
+
+                float angle = i * angleStep * Mathf.Deg2Rad;
+                Vector2 position = new Vector2(Mathf.Sin(angle) * rotationRadius, -Mathf.Cos(angle) * rotationRadius);
+                levelItemRect.anchoredPosition = position;
+
+                levelItemRect.rotation = Quaternion.Euler(0, 0, -i * angleStep);
+
+                levelItems.Add(levelItemRect);
+
+                GameObject indicator = Instantiate(selectionIndicatorPrefab, levelItemRect);
+                indicator.SetActive(false);
+                selectionIndicators.Add(indicator);
+            }
+
+            UpdateItemsAppearance();
         }
 
-        private void SelectPreviousLevel()
+        private void Update()
         {
-            if (!isTransitioning)
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                StartCoroutine(TransitionToLevel(-1));
+                RotateLevels(-1);
+            }
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                RotateLevels(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+            {
+                StartSelectedLevel();
             }
         }
 
-        private void SelectNextLevel()
+        private void RotateLevels(int direction)
         {
-            if (!isTransitioning)
-            {
-                StartCoroutine(TransitionToLevel(1));
-            }
+            currentSelectedIndex = (currentSelectedIndex + direction + levelKeys.Count) % levelKeys.Count;
+
+            float targetRotation = -currentSelectedIndex * (360f / levelKeys.Count);
+            levelItemsContainer.DORotate(new Vector3(0, 0, targetRotation), rotationDuration)
+                .SetEase(Ease.InOutCubic)
+                .OnUpdate(() => UpdateItemsAppearance())
+                .OnComplete(() => {
+                    UpdateLevelDisplay();
+                    UpdateItemsAppearance();
+                });
         }
 
-        private IEnumerator TransitionToLevel(int direction)
+        private void UpdateItemsAppearance()
         {
-            isTransitioning = true;
-
-            int newIndex = (currentSelectedIndex + direction + levelKeys.Count) % levelKeys.Count;
-
-            // 시작 위치 설정
-            Vector2 mainStartPos = mainLevelImage.rectTransform.anchoredPosition;
-            Vector2 leftStartPos = leftPreviewImage.rectTransform.anchoredPosition;
-            Vector2 rightStartPos = rightPreviewImage.rectTransform.anchoredPosition;
-
-            // 목표 위치 설정
-            Vector2 mainEndPos = mainStartPos - new Vector2(direction * Screen.width, 0);
-            Vector2 leftEndPos = leftStartPos - new Vector2(direction * Screen.width, 0);
-            Vector2 rightEndPos = rightStartPos - new Vector2(direction * Screen.width, 0);
-
-            // 애니메이션
-            float elapsedTime = 0f;
-            while (elapsedTime < transitionDuration)
+            float angleStep = 360f / levelKeys.Count;
+            for (int i = 0; i < levelItems.Count; i++)
             {
-                elapsedTime += Time.deltaTime;
-                float t = transitionCurve.Evaluate(elapsedTime / transitionDuration);
+                int relativeIndex = (i - currentSelectedIndex + levelKeys.Count) % levelKeys.Count;
+                float targetAngle = relativeIndex * angleStep;
 
-                mainLevelImage.rectTransform.anchoredPosition = Vector2.Lerp(mainStartPos, mainEndPos, t);
-                leftPreviewImage.rectTransform.anchoredPosition = Vector2.Lerp(leftStartPos, leftEndPos, t);
-                rightPreviewImage.rectTransform.anchoredPosition = Vector2.Lerp(rightStartPos, rightEndPos, t);
+                levelItems[i].rotation = Quaternion.Euler(0, 0, -targetAngle);
 
-                yield return null;
+                if (relativeIndex == 0)
+                {
+                    levelItems[i].DOScale(Vector3.one * centerScaleFactor, rotationDuration / 2);
+                    selectionIndicators[i].SetActive(true);
+                    levelItems[i].SetAsLastSibling();
+                }
+                else
+                {
+                    levelItems[i].DOScale(Vector3.one, rotationDuration / 2);
+                    selectionIndicators[i].SetActive(false);
+                }
+
+                float normalizedDistance = Mathf.Abs(relativeIndex) / (levelKeys.Count / 2f);
+                float alpha = 1 - normalizedDistance * 0.5f;
+                levelItems[i].GetComponent<Image>().DOFade(alpha, rotationDuration / 2);
             }
-
-            // 새 레벨로 업데이트
-            currentSelectedIndex = newIndex;
-            UpdateLevelDisplay();
-
-            // 위치 리셋
-            mainLevelImage.rectTransform.anchoredPosition = mainStartPos;
-            leftPreviewImage.rectTransform.anchoredPosition = leftStartPos;
-            rightPreviewImage.rectTransform.anchoredPosition = rightStartPos;
-
-            isTransitioning = false;
         }
 
         private void UpdateLevelDisplay()
         {
             if (levelKeys.Count == 0) return;
 
-            // 현재 레벨 정보 업데이트
-            UpdateLevelInfo(currentSelectedIndex, mainLevelImage, levelNameText, levelInfoText);
-
-            // 왼쪽 미리보기 업데이트
-            int leftIndex = (currentSelectedIndex - 1 + levelKeys.Count) % levelKeys.Count;
-            UpdatePreviewImage(leftIndex, leftPreviewImage);
-
-            // 오른쪽 미리보기 업데이트
-            int rightIndex = (currentSelectedIndex + 1) % levelKeys.Count;
-            UpdatePreviewImage(rightIndex, rightPreviewImage);
-            
-        }
-
-        private void UpdateLevelInfo(int index, Image image, TextMeshProUGUI nameText, TextMeshProUGUI infoText)
-        {
-            string levelKey = levelKeys[index];
+            string levelKey = levelKeys[currentSelectedIndex];
             LevelData levelData = levels[levelKey];
             LevelObject levelObject = levelData.GetLevelObject();
 
-            if (image != null)
-                image.sprite = levelObject.LevelImage;
-            if (nameText != null)
-                nameText.text = levelObject.levelName;
-            if (infoText != null)
-                infoText.text = $" High Score: {levelData.GetValue("highScore")}" +
-                                $" Clear Count: {levelData.GetValue("clearCount")}" +
-                                $" Play Count: {levelData.GetValue("playCount")}";
+            if (levelNameText != null)
+                levelNameText.text = levelObject.levelName;
+            if (levelInfoText != null)
+                levelInfoText.text = $"최고 점수: {levelData.GetValue("highScore")}\n" +
+                                     $"클리어 횟수: {levelData.GetValue("clearCount")}\n" +
+                                     $"플레이 횟수: {levelData.GetValue("playCount")}";
         }
 
-        private void UpdatePreviewImage(int index, Image image)
+        public void StartSelectedLevel()
         {
-            if (image != null)
+            if (levelKeys.Count > 0)
             {
-                string levelKey = levelKeys[index];
-                LevelObject levelObject = levels[levelKey].GetLevelObject();
-                image.sprite = levelObject.LevelImage;
+                StartLevel(levels[levelKeys[currentSelectedIndex]]);
             }
         }
 
@@ -197,6 +205,22 @@ namespace RhythmGame
             Debug.Log("게임 시작! " + levelData.GetLevelObject().levelName);
             GameManager.Instance.SetLevelData(levelData);
             SceneManager.LoadScene("GameScene");
+        }
+
+        private void AddLevelDataToDictionary()
+        {
+            foreach (var levelObject in levelObjects)
+            {
+                string levelKey = levelObject.levelName + "_" + levelObject.difficulty.ToString();
+
+                if (!levels.ContainsKey(levelKey))
+                {
+                    LevelData levelData = new LevelData(levelObject);
+                    levels.Add(levelKey, levelData);
+                    levelKeys.Add(levelKey);
+                    Debug.Log($"{levelObject.levelName}이(가) 딕셔너리에 추가되었습니다.");
+                }
+            }
         }
 
         public LevelData GetLevelDataFromDictionary(string levelKey, string levelName = null, int levelDifficulty = -1)
@@ -217,49 +241,6 @@ namespace RhythmGame
             }
 
             return null;
-        }
-
-        private void Update()
-        {
-            if (!isTransitioning)
-            {
-                if (Input.GetKeyDown(KeyCode.LeftArrow))
-                {
-                    SelectPreviousLevel();
-                }
-                else if (Input.GetKeyDown(KeyCode.RightArrow))
-                {
-                    SelectNextLevel();
-                }
-                else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
-                {
-                    StartSelectedLevel();
-                }
-            }
-        }
-
-        private void AddLevelDataToDictionary()
-        {
-            foreach (var levelObject in levelObjects)
-            {
-                string levelKey = levelObject.levelName + "_" + levelObject.difficulty.ToString();
-
-                if (!levels.ContainsKey(levelKey))
-                {
-                    LevelData levelData = new LevelData(levelObject);
-                    levels.Add(levelKey, levelData);
-                    levelKeys.Add(levelKey);
-                    Debug.Log($"{levelObject.levelName} is Added in Dictionary");
-                }
-            }
-        }
-
-        public void StartSelectedLevel()
-        {
-            if (levelKeys.Count > 0)
-            {
-                StartLevel(levels[levelKeys[currentSelectedIndex]]);
-            }
         }
     }
 }
