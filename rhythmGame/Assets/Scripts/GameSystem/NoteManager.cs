@@ -59,8 +59,8 @@ public class NoteManager : MonoBehaviour
             CreateHitPositionMarker();
         }
 
-        //StartCoroutine(StartAudioWithDelay());                  //지연 후 오디오 재생 코루틴 시작
-        AudioPlay();
+        StartCoroutine(StartAudioWithDelay());                  //지연 후 오디오 재생 코루틴 시작
+        //AudioPlay();
     }
 
     private void AudioPlay()
@@ -70,11 +70,11 @@ public class NoteManager : MonoBehaviour
     }
 
     //지연 후 오디오 재생을 위한 코루틴
-    //private IEnumerator StartAudioWithDelay()
-    //{
-    //    yield return new WaitForSeconds(initialDelay);
-    //    audioSource.Play();
-    //}
+    private IEnumerator StartAudioWithDelay()
+    {
+        yield return new WaitForSeconds(initialDelay);
+        audioSource.Play();
+    }
 
     void Update()
     {

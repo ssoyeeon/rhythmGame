@@ -11,12 +11,9 @@ namespace RhythmGame
     [System.Serializable]
     public class LevelData
     {
-        [SerializeField]
-        private int highScore;
-        [SerializeField]
-        private int clearCount;
-        [SerializeField]
-        private int playCount;
+        [SerializeField] private int highScore;
+        [SerializeField] private int clearCount;
+        [SerializeField] private int playCount;
         private LevelObject levelObject;
 
         public LevelData(LevelObject _levelObject)
@@ -28,14 +25,10 @@ namespace RhythmGame
         {
             switch (dataName)
             {
-                case nameof(highScore):
-                    return highScore;
-                case nameof(clearCount):
-                    return clearCount;
-                case nameof(playCount):
-                    return playCount;
-                default:
-                    return -1;
+                case nameof(highScore): return highScore;
+                case nameof(clearCount): return clearCount;
+                case nameof(playCount): return playCount;
+                default: return -1;
             }
         }
 
@@ -67,10 +60,14 @@ namespace RhythmGame
 
         public static LevelManager Instance;
 
-        private Coroutine rotationCoroutine;
+        private bool isRotating = false;
 
-        private bool isRotating = false;  // 회전 중인지 확인하는 변수 추가
+        private int visibleItemCount = 5;
+        private List<int> visibleIndices = new List<int>();
 
+        private Dictionary<RectTransform, Tweener> rotationTweens = new Dictionary<RectTransform, Tweener>();
+        private Dictionary<RectTransform, Tweener> scaleTweens = new Dictionary<RectTransform, Tweener>();
+        private Dictionary<Image, Tweener> fadeTweens = new Dictionary<Image, Tweener>();
 
         private void Awake()
         {
@@ -87,12 +84,16 @@ namespace RhythmGame
             {
                 AddLevelDataToDictionary();
             }
+
+            // DOTween 초기화 설정
+            DOTween.SetTweensCapacity(500, 50);
         }
 
         private void Start()
         {
             CreateLevelItems();
             UpdateLevelDisplay();
+            CalculateVisibleIndices();
         }
 
         private void CreateLevelItems()
@@ -120,13 +121,12 @@ namespace RhythmGame
                 selectionIndicators.Add(indicator);
             }
 
-            UpdateItemsAppearance();
+            UpdateItemsAppearance(true);
         }
-
 
         private void Update()
         {
-            if (!isRotating)  // 회전 중이 아닐 때만 입력을 받음
+            if (!isRotating)
             {
                 if (Input.GetKeyDown(KeyCode.LeftArrow))
                 {
@@ -145,74 +145,120 @@ namespace RhythmGame
 
         private void RotateLevels(int direction)
         {
-            if (isRotating) return;  // 이미 회전 중이면 새로운 회전을 시작하지 않음
+            if (isRotating) return;
 
             isRotating = true;
-            if (rotationCoroutine != null)
-            {
-                StopCoroutine(rotationCoroutine);
-            }
-
             currentSelectedIndex = (currentSelectedIndex + direction + levelKeys.Count) % levelKeys.Count;
             float targetRotation = -currentSelectedIndex * (360f / levelKeys.Count);
 
-            rotationCoroutine = StartCoroutine(RotateCoroutine(targetRotation));
+            levelItemsContainer.DORotate(new Vector3(0, 0, targetRotation), rotationDuration)
+                .SetEase(Ease.OutCubic)
+                .OnUpdate(() => UpdateItemsAppearance())
+                .OnComplete(() => {
+                    UpdateLevelDisplay();
+                    CalculateVisibleIndices();
+                    UpdateItemsAppearance(true);
+                    isRotating = false;
+                });
         }
 
-        private IEnumerator RotateCoroutine(float targetRotation)
+        private void CalculateVisibleIndices()
         {
-            float startRotation = levelItemsContainer.rotation.eulerAngles.z;
-            float elapsedTime = 0f;
-
-            while (elapsedTime < rotationDuration)
+            visibleIndices.Clear();
+            int halfVisible = visibleItemCount / 2;
+            for (int i = -halfVisible; i <= halfVisible; i++)
             {
-                elapsedTime += Time.deltaTime;
-                float t = Mathf.SmoothStep(0, 1, elapsedTime / rotationDuration);
-                float currentRotation = Mathf.LerpAngle(startRotation, targetRotation, t);
-
-                levelItemsContainer.rotation = Quaternion.Euler(0, 0, currentRotation);
-                UpdateItemsAppearance();
-
-                yield return null;
+                visibleIndices.Add((currentSelectedIndex + i + levelKeys.Count) % levelKeys.Count);
             }
-
-            levelItemsContainer.rotation = Quaternion.Euler(0, 0, targetRotation);
-            UpdateLevelDisplay();
-            UpdateItemsAppearance();
-
-            isRotating = false;  // 회전 완료 후 상태 업데이트
         }
 
-        private void UpdateItemsAppearance()
+        private void UpdateItemsAppearance(bool forceUpdate = false)
         {
             float angleStep = 360f / levelKeys.Count;
+
             for (int i = 0; i < levelItems.Count; i++)
             {
+                if (!forceUpdate && !visibleIndices.Contains(i)) continue;
+
+                RectTransform item = levelItems[i];
+                if (item == null) continue;  // null 체크 추가
+
                 int relativeIndex = (i - currentSelectedIndex + levelKeys.Count) % levelKeys.Count;
                 float targetAngle = relativeIndex * angleStep;
 
-                levelItems[i].rotation = Quaternion.Euler(0, 0, -targetAngle);
-
-                if (relativeIndex == 0)
+                // 회전 Tween
+                if (rotationTweens.TryGetValue(item, out Tweener rotationTween) && rotationTween != null && rotationTween.IsActive())
                 {
-                    levelItems[i].localScale = Vector3.one * centerScaleFactor;
-                    selectionIndicators[i].SetActive(true);
-                    levelItems[i].SetAsLastSibling();
+                    rotationTween.ChangeEndValue(new Vector3(0, 0, -targetAngle), true).Restart();
                 }
                 else
                 {
-                    levelItems[i].localScale = Vector3.one;
+                    rotationTween = item.DORotate(new Vector3(0, 0, -targetAngle), rotationDuration).SetEase(Ease.OutCubic);
+                    rotationTweens[item] = rotationTween;
+                }
+
+                // 크기 Tween
+                if (scaleTweens.TryGetValue(item, out Tweener scaleTween) && scaleTween != null && scaleTween.IsActive())
+                {
+                    scaleTween.ChangeEndValue(relativeIndex == 0 ? Vector3.one * centerScaleFactor : Vector3.one, true).Restart();
+                }
+                else
+                {
+                    scaleTween = item.DOScale(relativeIndex == 0 ? Vector3.one * centerScaleFactor : Vector3.one, rotationDuration / 2).SetEase(Ease.OutCubic);
+                    scaleTweens[item] = scaleTween;
+                }
+
+                if (relativeIndex == 0)
+                {
+                    selectionIndicators[i].SetActive(true);
+                    item.SetAsLastSibling();
+                }
+                else
+                {
                     selectionIndicators[i].SetActive(false);
                 }
 
-                float normalizedDistance = Mathf.Abs(relativeIndex) / (levelKeys.Count / 2f);
-                float alpha = 1 - normalizedDistance * 0.5f;
-                Color itemColor = levelItems[i].GetComponent<Image>().color;
-                itemColor.a = alpha;
-                levelItems[i].GetComponent<Image>().color = itemColor;
+                // 투명도 Tween
+                float normalizedDistance = Mathf.Abs(relativeIndex) / (visibleItemCount / 2f);
+                float targetAlpha = Mathf.Clamp01(1 - normalizedDistance);
+                Image itemImage = item.GetComponent<Image>();
+                if (itemImage != null)
+                {
+                    if (fadeTweens.TryGetValue(itemImage, out Tweener fadeTween) && fadeTween != null && fadeTween.IsActive())
+                    {
+                        Color targetColor = itemImage.color;
+                        targetColor.a = targetAlpha;
+                        fadeTween.ChangeEndValue(targetColor, true).Restart();
+                    }
+                    else
+                    {
+                        fadeTween = itemImage.DOFade(targetAlpha, rotationDuration / 2);
+                        fadeTweens[itemImage] = fadeTween;
+                    }
+                }
             }
         }
 
+        private void OnDestroy()
+        {
+            // Tween 정리
+            foreach (var tween in rotationTweens.Values)
+            {
+                if (tween != null && tween.IsActive()) tween.Kill();
+            }
+            foreach (var tween in scaleTweens.Values)
+            {
+                if (tween != null && tween.IsActive()) tween.Kill();
+            }
+            foreach (var tween in fadeTweens.Values)
+            {
+                if (tween != null && tween.IsActive()) tween.Kill();
+            }
+
+            rotationTweens.Clear();
+            scaleTweens.Clear();
+            fadeTweens.Clear();
+        }
         private void UpdateLevelDisplay()
         {
             if (levelKeys.Count == 0) return;
@@ -279,5 +325,6 @@ namespace RhythmGame
 
             return null;
         }
+
     }
 }
