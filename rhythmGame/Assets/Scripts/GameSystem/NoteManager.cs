@@ -60,7 +60,7 @@ public class NoteManager : MonoBehaviour
         }
 
         StartCoroutine(StartAudioWithDelay());                  //지연 후 오디오 재생 코루틴 시작
-        //AudioPlay();
+        AudioPlay();
     }
 
     private void AudioPlay()

@@ -55,7 +55,8 @@ public class NoteObject : MonoBehaviour
             noteManager.notePoolEnqueue(this);
             noteManager.poolManager.ReturnToPool(this.gameObject);
             NoteManager.instance.scoreManager.AddScore(Timing.Miss);
-            Instantiate(HitCheckEffect[4], transform.position, HitCheckEffect[3].transform.rotation);
+            GameObject temp = Instantiate(HitCheckEffect[4], transform.position, HitCheckEffect[3].transform.rotation);
+            Destroy(temp, 2.0f);
             //Debug.Log("Miss");
         }
     }
@@ -72,26 +73,30 @@ public class NoteObject : MonoBehaviour
             {
                 //Debug.Log("Perfect");
 
-                Instantiate(HitCheckEffect[0], transform.position, HitCheckEffect[0].transform.rotation);
+                GameObject temp = Instantiate(HitCheckEffect[0], transform.position, HitCheckEffect[0].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Perfect);
+                Destroy(temp, 2.0f);
             }
             else if (distance < 0.8f)
             {
                 //Debug.Log("Great");
-                Instantiate(HitCheckEffect[1], transform.position, HitCheckEffect[1].transform.rotation);
+                GameObject temp = Instantiate(HitCheckEffect[1], transform.position, HitCheckEffect[1].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Great);
+                Destroy(temp, 2.0f);
             }
             else if (distance < 1.1f)
             {
-               // Debug.Log("Good");
-                Instantiate(HitCheckEffect[2], transform.position, HitCheckEffect[2].transform.rotation);
+                // Debug.Log("Good");
+                GameObject temp = Instantiate(HitCheckEffect[2], transform.position, HitCheckEffect[2].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Good);
+                Destroy(temp, 2.0f);
             }
             else
             {
                 //Debug.Log("Bad");
-                Instantiate(HitCheckEffect[3], transform.position, HitCheckEffect[3].transform.rotation);
+                GameObject temp = Instantiate(HitCheckEffect[3], transform.position, HitCheckEffect[3].transform.rotation);
                 NoteManager.instance.scoreManager.AddScore(Timing.Bad);
+                Destroy(temp, 2.0f);
             }
         }
         else
