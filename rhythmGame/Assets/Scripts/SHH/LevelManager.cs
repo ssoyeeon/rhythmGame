@@ -67,6 +67,11 @@ namespace RhythmGame
 
         public static LevelManager Instance;
 
+        private Coroutine rotationCoroutine;
+
+        private bool isRotating = false;  // 회전 중인지 확인하는 변수 추가
+
+
         private void Awake()
         {
             if (Instance == null)
@@ -118,34 +123,64 @@ namespace RhythmGame
             UpdateItemsAppearance();
         }
 
+
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            if (!isRotating)  // 회전 중이 아닐 때만 입력을 받음
             {
-                RotateLevels(-1);
-            }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                RotateLevels(1);
-            }
-            else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
-            {
-                StartSelectedLevel();
+                if (Input.GetKeyDown(KeyCode.LeftArrow))
+                {
+                    RotateLevels(-1);
+                }
+                else if (Input.GetKeyDown(KeyCode.RightArrow))
+                {
+                    RotateLevels(1);
+                }
+                else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+                {
+                    StartSelectedLevel();
+                }
             }
         }
 
         private void RotateLevels(int direction)
         {
-            currentSelectedIndex = (currentSelectedIndex + direction + levelKeys.Count) % levelKeys.Count;
+            if (isRotating) return;  // 이미 회전 중이면 새로운 회전을 시작하지 않음
 
+            isRotating = true;
+            if (rotationCoroutine != null)
+            {
+                StopCoroutine(rotationCoroutine);
+            }
+
+            currentSelectedIndex = (currentSelectedIndex + direction + levelKeys.Count) % levelKeys.Count;
             float targetRotation = -currentSelectedIndex * (360f / levelKeys.Count);
-            levelItemsContainer.DORotate(new Vector3(0, 0, targetRotation), rotationDuration)
-                .SetEase(Ease.InOutCubic)
-                .OnUpdate(() => UpdateItemsAppearance())
-                .OnComplete(() => {
-                    UpdateLevelDisplay();
-                    UpdateItemsAppearance();
-                });
+
+            rotationCoroutine = StartCoroutine(RotateCoroutine(targetRotation));
+        }
+
+        private IEnumerator RotateCoroutine(float targetRotation)
+        {
+            float startRotation = levelItemsContainer.rotation.eulerAngles.z;
+            float elapsedTime = 0f;
+
+            while (elapsedTime < rotationDuration)
+            {
+                elapsedTime += Time.deltaTime;
+                float t = Mathf.SmoothStep(0, 1, elapsedTime / rotationDuration);
+                float currentRotation = Mathf.LerpAngle(startRotation, targetRotation, t);
+
+                levelItemsContainer.rotation = Quaternion.Euler(0, 0, currentRotation);
+                UpdateItemsAppearance();
+
+                yield return null;
+            }
+
+            levelItemsContainer.rotation = Quaternion.Euler(0, 0, targetRotation);
+            UpdateLevelDisplay();
+            UpdateItemsAppearance();
+
+            isRotating = false;  // 회전 완료 후 상태 업데이트
         }
 
         private void UpdateItemsAppearance()
@@ -160,19 +195,21 @@ namespace RhythmGame
 
                 if (relativeIndex == 0)
                 {
-                    levelItems[i].DOScale(Vector3.one * centerScaleFactor, rotationDuration / 2);
+                    levelItems[i].localScale = Vector3.one * centerScaleFactor;
                     selectionIndicators[i].SetActive(true);
                     levelItems[i].SetAsLastSibling();
                 }
                 else
                 {
-                    levelItems[i].DOScale(Vector3.one, rotationDuration / 2);
+                    levelItems[i].localScale = Vector3.one;
                     selectionIndicators[i].SetActive(false);
                 }
 
                 float normalizedDistance = Mathf.Abs(relativeIndex) / (levelKeys.Count / 2f);
                 float alpha = 1 - normalizedDistance * 0.5f;
-                levelItems[i].GetComponent<Image>().DOFade(alpha, rotationDuration / 2);
+                Color itemColor = levelItems[i].GetComponent<Image>().color;
+                itemColor.a = alpha;
+                levelItems[i].GetComponent<Image>().color = itemColor;
             }
         }
 
