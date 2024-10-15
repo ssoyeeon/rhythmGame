@@ -340,7 +340,7 @@ MonoBehaviour:
   nowNotes: []
   debugMode: 0
   hitPositionMarker: {fileID: 0}
-  initialDelay: 3
+  initialDelay: 0.5
 --- !u!4 &281492325
 Transform:
   m_ObjectHideFlags: 0
