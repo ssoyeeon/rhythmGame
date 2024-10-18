@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEditor;
+using System.IO; 
+
 
 [CreateAssetMenu(fileName = "NewSequence" , menuName = "Sequencer/Sequence")]
 public class SequenceData : ScriptableObject
@@ -14,22 +16,37 @@ public class SequenceData : ScriptableObject
 
     public void SaveToJson()
     {
-        if(trackJsonFile == null)
+        if (trackJsonFile == null)
         {
             Debug.LogError("Track JSON 파일이 없습니다.");
             return;
         }
 
+        // Resources 폴더 내의 상대 경로 (예: GameResource/track_data.json)
+        string resourcePath = "GameResource/" + trackJsonFile.name;
+
         var data = JsonConvert.SerializeObject(new
         {
             bpm,
             numberOfTracks,
-            audioClipPath = AssetDatabase.GetAssetPath(audioClip),
+            audioClipPath = audioClip != null ? "GameResource/" + audioClip.name : "",
             trackNotes
         }, Formatting.Indented);
 
-        System.IO.File.WriteAllText(AssetDatabase.GetAssetPath(trackJsonFile), data);
-        AssetDatabase.Refresh();
+        // 실제 파일 시스템 경로
+        string fullPath = Path.Combine(Application.dataPath, "Resources", resourcePath);
+
+        // 디렉토리가 없으면 생성
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+
+        // JSON 파일 저장
+        System.IO.File.WriteAllText(fullPath, data);
+
+        Debug.Log($"Track data saved to {fullPath}");
+
+#if UNITY_EDITOR
+        UnityEditor.AssetDatabase.Refresh();
+#endif
     }
 
     public void LoadFromJson()
